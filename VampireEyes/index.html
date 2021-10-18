@@ -1,0 +1,122 @@
+<!-- 
+Project Name: SPIKE Eyes Interface
+Author: Ethan Danahy
+Last update: October 15th, 2021
+Description: Use a Chrome Browser and SPIKE Prime to
+			 control a pair of eyes on the screen.
+(C) Tufts Center for Engineering Education and Outreach (CEEO)
+-->
+<html>
+    <head>
+	    <title>SPIKE Eyes Interface</title>
+        <!--TuftsCEEO ServiceDock-->
+        <script src="https://cdn.jsdelivr.net/gh/tuftsceeo/SPIKE-Web-Interface@1.0/cdn/ServiceDock.min.js"></script>
+        <style>
+	        .bottom_text {
+		        color: #ffff;
+	        }
+	        .mainimage {
+		        width: 820px;
+		        height: 820px;
+		    }
+		    .mainimageshift {
+		        position: absolute;
+		        left: 50%;
+		        transform: translate(-50%, 0%);
+	        }
+		</style>
+    </head>
+    <body bgcolor="black">
+
+	<!--ServiceDock-->
+    <service-spike id="service_SPIKE" style="position: absolute; top: 5px; right: 5px;">
+        <span class="tooltiptext">Connect to SPIKE Prime</span>
+    </service-spike>
+
+	<select name="input" id="spike_input">
+	  <option value="accelerometer">Accelerometer in Hub</option>
+	  <option value="motor">Motor on A</option>
+	  <option value="distance">Distance on B</option>
+	</select>
+	&nbsp;
+	<button onclick="start_monitoring()">Start Monitoring</button>
+	&nbsp;
+	<span class="bottom_text" id="value"></span>
+
+	<div class="mainimage">
+		<div class="mainimage mainimageshift">
+			<img src="vampire_head.png" style="position:absolute;">
+			<img id="vampire_eyes" src="vampire_eyes.png" style="position:absolute;">
+		</div>
+	</div>
+
+	<hr>
+
+	<p class="bottom_text"><b>Disclaimer</b></p>
+
+	<p class="bottom_text">LEGO®, the LEGO® logo, the Brick, MINDSTORMS®, SPIKE™, and the Minifigure are trademarks of ©The LEGO® Group. All other trademarks and copyrights are the property of their respective owners. All rights reserved.</p>
+
+	<p class="bottom_text">This page isn’t affiliated, authorized, or endorsed by The LEGO Group.</p>
+
+    </body>
+    
+    <!-- SCRIPTS THAT MAKE THIS RUN -->
+    <script>
+		// setup
+		var mySPIKE = document.getElementById("service_SPIKE").getService();
+		var min_val = 0;
+		var max_val = 100;
+		var sensor = null;
+		var sensor_func = null;
+
+	    function start_monitoring() {
+		    var mode_selector = document.getElementById("spike_input");
+			var mode = mode_selector.options[mode_selector.selectedIndex].value;
+		    if (mode == 'accelerometer') {
+			    sensor = new mySPIKE.PrimeHub().motion_sensor;
+			    sensor_func = sensor.get_roll_angle;
+			    min_val = -180;
+			    max_val = 180;
+			    poll_sensor();
+		    } else if (mode == 'motor') {
+			    sensor = new mySPIKE.Motor("A");
+			    sensor_func = sensor.get_degrees_counted;
+			    min_val = -360;
+			    max_val = 360;
+				poll_sensor();
+		    } else if (mode == 'distance') {
+			    sensor = new mySPIKE.DistanceSensor("B");
+			    sensor_func = sensor.get_distance_percentage;
+			    min_val = 0
+			    max_val = 1
+			    poll_sensor();
+		    } else {
+			    alert('MODE NOT RECOGNIZED.')
+		    }
+		    
+	    }
+	    
+	    // check sensor value and move eyes accordingly
+	    function poll_sensor() {
+		    var sensor_value = sensor_func();
+		    document.getElementById("value").innerHTML = sensor_value;
+		    if (sensor_value != 'none') {
+			    sensor_value = Math.min(Math.max(parseFloat(sensor_value), min_val), max_val);
+				move_eyes((sensor_value - min_val)/(max_val - min_val));
+			}
+			setTimeout(poll_sensor, 300); // recheck sensor
+	    }
+	    
+	    // move eyes across screen by a certain percent
+	    // - new_percent is between 0 and 1
+	    function move_eyes (new_percent) {
+		    var vampire_eyes = document.getElementById("vampire_eyes");
+		    var min_translate_position = 0;
+		    var max_translate_position = 200; // total size of translate shift
+		    var translate_amount = new_percent * (max_translate_position - min_translate_position) + min_translate_position;
+		    // update the location of eyes
+			vampire_eyes.style.transform = "translate(" + Number.parseInt(translate_amount) + "px, 0px)";
+	    }
+	    
+    </script>
+</html>
