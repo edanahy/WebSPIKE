@@ -1,0 +1,137 @@
+<!-- 
+Project Name: SPIKE Balloon Pop Webpage
+Author: Ethan Danahy
+Last update: October 20th, 2021
+Description: Use a Chrome Browser and SPIKE Prime (Force on Port A)
+			 to pop a virtual balloon (with sound effect!).
+(C) Tufts Center for Engineering Education and Outreach (CEEO)
+-->
+<html>
+<head>
+	<title>SPIKE Balloon Pop Webpage</title>
+    <!--TuftsCEEO ServiceDock-->
+    <script src="https://cdn.jsdelivr.net/gh/tuftsceeo/SPIKE-Web-Interface@1.0/cdn/ServiceDock.min.js"></script>
+    <style>
+        .bottom_text {
+	        color: black;
+        }
+        .mainimage {
+	        width: 500px;
+	        height: 500px;
+	    }
+	    .animationimage {
+		    width: 500px;
+	        height: 500px;
+	        display: none;
+	    }
+	    .mainimageshift {
+	        position: absolute;
+	        left: 50%;
+	        transform: translate(-50%, 0%);
+        }
+
+        .topToolbar {
+            background-color: rgb(243, 250, 254);
+            color: rgb(7, 23, 44);
+            position: relative;
+            width: 500px;
+            height: 70px;
+            border: solid;
+            border-width: 1px;
+            margin: auto;
+            display: inline-block;
+        }
+        .service {
+            position: relative;
+            float: left;
+            margin: 0px 10px 10px 0px;
+        }
+
+	</style>
+</head>
+<body>
+
+	<!--ServiceDock-->
+	<div id="topToolbar_container" align=center>
+	    <div id="topToolbar_SPIKE" class="topToolbar">
+	        <div style="position: relative; float:left; margin: 10px; text-align: center; top: 20%;">
+	            Connect SPIKE&trade; Prime (with Force Sensor on Port A):
+	        </div>
+	        <service-spike id="service_SPIKE" class="service" style = "top: -5px;"></service-spike>
+	    </div>
+	</div>
+
+	<br />
+	
+	<div align=center>
+		<img class='mainimage' id='mainimage' src='Balloon.jpg' onclick='do_pop();' />
+		<img class='animationimage' id='animationimage' src='' />
+	</div>
+
+	<br />
+
+	<!-- SOUND -->
+	<div align=center>
+		<audio controls id='sound'
+		    src="./BalloonPop.mp3">Your browser does not support the <code>audio</code> element.
+		</audio>
+	</div>
+	
+	<hr />
+
+	<p class="bottom_text"><b>Disclaimer</b></p>
+
+	<p class="bottom_text">LEGO®, the LEGO® logo, the Brick, MINDSTORMS®, SPIKE™, and the Minifigure are trademarks of ©The LEGO® Group. All other trademarks and copyrights are the property of their respective owners. All rights reserved.</p>
+
+	<p class="bottom_text">This page isn’t affiliated, authorized, or endorsed by The LEGO Group.</p>
+
+</body>	
+
+<!-- SCRIPTS THAT MAKE THIS RUN -->
+<script>
+	// setup
+	var mainimage = document.getElementById("mainimage");
+	var animationimage = document.getElementById("animationimage");
+	var force_sensor = null;
+	var force_threshold = 5; // how hard to push to trigger response
+
+	// setup SPIKE Service Dock
+	var mySPIKE = document.getElementById("service_SPIKE").getService();
+	mySPIKE.executeAfterInit(async function() {
+		// start polling for touch sensor
+		force_sensor = new mySPIKE.ForceSensor("A");
+		poll_touch_sensor();
+	});
+	
+	function poll_touch_sensor() {
+		// get touch sensor value:
+		var touch_val = force_sensor.get_force_newton();
+		if (touch_val > force_threshold) {
+			do_pop();
+		} else {
+			// no touch, so check again (in a bit)
+			setTimeout(poll_touch_sensor, 200);
+		}
+	}
+	function do_pop() {
+		mainimage.style.display = "none";
+		animationimage.style.display = "block";
+		animationimage.src = "BalloonPop.gif"; // this will load image and play gif
+		setTimeout(play_audio, 500); // slight delay to try and line up sound with image
+		setTimeout(reset_images, 2000);
+		// start monitoring again
+		setTimeout(poll_touch_sensor, 2000);
+	}
+	function play_audio() {
+		var audio = document.getElementById("sound");
+		audio.play();
+	}
+	// reset back to original page load (show static image, hide gif)
+	function reset_images() {
+		mainimage.style.display = "block";
+		animationimage.style.display = "none";
+		animationimage.src = ""; // clearing src will force reload next time
+	}
+	
+</script>
+</html>
