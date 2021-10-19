@@ -1,297 +1,62 @@
 <!-- 
-Project Name: Simple SPIKE Prime Web Interface
-File name: WebSPIKE.html (or: index.html when used as default)
-Author: Jeremy Jung and Ethan Danahy
-Last update: September 22nd, 2021
-Description: Use a Chrome Browser and custom webpage to
-			 save and execute programs to the SPIKE Prime brick;
-             note: without ability to name program and change slots.
-History: 
-    Created by Jeremy on April 5th, 2021
-    Interface updates by Ethan on April 6th, 2021
-    Converted to github page by Ethan on September 22nd, 2021
-    - see https://github.com/edanahy/WebSPIKE/
+Projects: Various SPIKE Prime Webpage Interfaces
+Author: Ethan Danahy
+Last update: October 2021
+Description: These examples use a Chrome Browser and the Tufts CEEO's
+			 SPIKE Prime Service Dock to interact with the SPIKE Prime
+			 Hardware.
+For more information about the CEEO's SPIKE Prime Service Dock:
+- https://tuftsceeo.github.io/SPIKE-Web-Interface/
 (C) Tufts Center for Engineering Education and Outreach (CEEO)
 -->
 <html>
-    <head>
-	    <title>SPIKE Prime Web Interface</title>
-        <!--TuftsCEEO ServiceDock-->
-        <script src="https://cdn.jsdelivr.net/gh/tuftsceeo/SPIKE-Web-Interface@1.0/cdn/ServiceDock.min.js"></script>
-        <!--IDE API-->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.min.js"></script>
-        <style>
-	      	.instructions {
-				padding: 5px;
-				background-color: lightyellow;
-			}
-	        #editor {
-		        border: 1px black solid;
-	            position: relative;
-	            left: 10px;
-	            height: 300px;
-	            width: 700px;
-	        }
-	        .documentation {
-	            height: 50px;
-	            width: 50px;
-	            position: relative;
-	            float: left;
-	            border-radius: 10px;
-	            background-color: yellowgreen;
-	            top: 10px;
-	            cursor: pointer;
-	            background: url("https://tufts-cr-for-lego.codingrooms.com/modules/views/icons8_api.png");
-	            background-color: rgb(240, 182, 82);
-	            background-size: 75px 87px;
-	            border: none;
-	            background-position: center;
-			}
-			
-	        .topToolbar {
-	            background-color: rgb(243, 250, 254);
-	            color: rgb(7, 23, 44);
-	            position: relative;
-	            width: 500px;
-	            height: 70px;
-	            border: solid;
-	            border-width: 1px;
-	            margin: auto;
-	            display: inline-block;
-	        }
-	        
-	        .service {
-	            position: relative;
-	            float: left;
-	            margin: 0px 10px 10px 0px;
-	        }
+<head>
+	<title>Web-Interfaces for SPIKE Prime</title>
+	<style>
+		.bottom_text {
+	        color: black;
+        }
+	</style>
+</head>
+<body>
 	
-	        .service:focus,
-	        .documentation:focus,
-	        .tooltip:focus {
-	            outline: 0;
-	        }
-
-			/* toolTip CSS from w3schools */
-
-	        /* Tooltip container */
-	        .tooltip {
-	            position: relative;
-	            display: inline-block;
-	        }
+	<h1>Web Interfaces for SPIKE Prime</h1>
 	
-	        /* Tooltip text */
-	        .tooltip .tooltiptext {
-	            visibility: hidden;
-	            width: 190%;
-	            background-color: #555;
-	            color: #fff;
-	            text-align: center;
-	            padding: 5px 0;
-	            border-radius: 6px;
+	<p><b>Description:</b> A collection of example projects using a Web Browser for interacting with SPIKE Prime.</p>
 	
-	            /* Position the tooltip text */
-	            position: absolute;
-	            top: 30px;
-	            z-index: 1;
-	            left: 10%;
+	<p>This is achieved using the <a href='https://tuftsceeo.github.io/SPIKE-Web-Interface/' target=_blank>Service Dock
+		for SPIKE Prime</a> JavaScript interface created by <a href='http://ceeoinnovations.com' target=_blank>Tufts CEEO</a>.</p>
 	
-	            /* Fade in tooltip */
-	            opacity: 0;
-	            transition: opacity 0.3s;
-	            transition-delay: 0.5s;
-	        }
+	<h2>List of Examples</h2>
 	
-	        /* Show the tooltip text when you mouse over the tooltip container */
-	        .tooltip:hover .tooltiptext {
-	            visibility: visible;
-	            opacity: 1;
-	        }
-		</style>
-    </head>
-    <body>
-	    
-	<h1>SPIKE Prime Web Interface</h1>
-
-    <!--Instructions-->
-	<div class="instructions">
-		<p>
-	    <b>To use the SPIKE™ Prime hardware,</b> you must enable the WebSerial API in your browser. To do so, please make sure:
-	    <ul>
-	        <li>You are using the Google Chrome browser.</li>
-	        <li>The following chrome flags are enabled on <b>chrome://flags</b>.</li>
-	        <ul>
-	          <li>Mac OSX user? <em>#enable-experimental-web-platform-features</em></li>
-	          <li>Windows user? <em>#enable-experimental-web-platform-features</em> <b>AND</b> <em>#new-usb-backend</em></li>
-	        </ul>
-	    </ul>
-
-	    <b>To enable these flags:</b>
-	    <ol>
-	        <li>In your Browser URL, visit <b>chrome://flags</b></li>
-	        <li>Set the your required flags to "Enabled" via dropdown</li>
-	        <li>Relaunch the browser to have changes take effect</li>
-	        <li>Revisit this page and activate the SPIKE™ Prime Service Dock</li>
-	    </ol>
-	  </p>
-
-		<!--ServiceDock-->
-		<!-- topToolbar: (Name of hardware, button connecting to hardware, button to documentation for hardware programming-->
-		<div id="topToolbar_container" align=center>
-		    <div id="topToolbar_SPIKE" class="topToolbar">
-		        <div style="position: relative; float:left; margin: 10px; text-align: center; top: 20%;">
-		            Service Dock for SPIKE&trade; Prime:
-		        </div>
-		        <service-spike id="service_SPIKE" class="service tooltip" style = "top: -5px;">
-		            <span class="tooltiptext">Connect to SPIKE Prime</span>
-		        </service-spike>
-		        <button id="documentation_SPIKE" class="documentation tooltip">
-		            <span class="tooltiptext">SPIKE API Documentation</span>
-		        </button>
-		    </div>
-		</div>
-
-	</div>
+	<blockquote>
 	
-	<br><hr>
+		<h3>Web IDE</h3>
+		
+		<p><b>Description:</b> A browser-based Python IDE for programming the SPIKE Prime.</p>
+		
+		<p><b>Link:</b> <a href="./WebIDE/" target="_blank">WebIDE</a></p>
+
+		<h3>Vampire Eyes</h3>
+		
+		<p><b>Description:</b> A halloween-themed example of polling a SPIKE input and moving in-browser images.</p>
+		
+		<p><b>Link:</b> <a href="./VampireEyes/" target="_blank">VampireEyes</a></p>
+
+		<h3>Balloon Pop</h3>
+		
+		<p><b>Description:</b> Triggering images and sound when a SPIKE Force Sensor is pushed.</p>
+		
+		<p><b>Link:</b> <a href="./BalloonPop/" target="_blank">BalloonPop</a></p>
 	
-    <!--GUI-->
-    <div id = "demobox"><b>Slot 0:</b>
-        <input type="button" id="save" value="Save" style="display: none">
-        <input type="button" id="execute" value="Execute" style="display: none">
-        <input type="button" id="saveandexecute" value="Save and Execute">
-        <input type="button" id="stop" value="Stop">
-        <br><br>
-        <!-- ####         ***         Code editor          ***        #### -->
-        <!-- #### CHANGE THIS CODE TO CHANGE DEFAULT SPIKE PRIME CODE #### -->
-        <div id="editor"># Sample Code
-from spike import PrimeHub, LightMatrix, Motor, MotorPair
-from spike.control import wait_for_seconds, wait_until, Timer
-hub = PrimeHub()
-hub.light_matrix.show_image('HAPPY')
-</div>
-        </div>
+	</blockquote>
 
-	<br><hr><br>
+	<hr />
 
-	<p><b>Sample Code</b></p>
+	<p class="bottom_text"><b>Disclaimer</b></p>
 
-	<p><div class="instructions"><blockquote>
-<span><code><pre>
-<b># Default Program</b>
-from spike import PrimeHub, LightMatrix, Motor, MotorPair
-from spike.control import wait_for_seconds, wait_until, Timer
-hub = PrimeHub()
-hub.light_matrix.show_image('HAPPY')
-</pre></code></span>
-	</blockquote></div></p>
+	<p class="bottom_text">LEGO®, the LEGO® logo, the Brick, MINDSTORMS®, SPIKE™, and the Minifigure are trademarks of ©The LEGO® Group. All other trademarks and copyrights are the property of their respective owners. All rights reserved.</p>
 
-	<p><div class="instructions"><blockquote>
-<span><code><pre>
-<b># Test Hub: Happy and Sad</b>
-from spike import PrimeHub, LightMatrix, Button, StatusLight, ForceSensor, MotionSensor, Speaker, ColorSensor, App, DistanceSensor, Motor, MotorPair
-from spike.control import wait_for_seconds, wait_until, Timer
+	<p class="bottom_text">This page isn’t affiliated, authorized, or endorsed by The LEGO Group.</p>
 
-hub = PrimeHub()
-
-hub.light_matrix.show_image('HAPPY')
-wait_for_seconds(1)
-hub.light_matrix.show_image('SAD')
-wait_for_seconds(1)
-
-hub.light_matrix.show_image('HAPPY')
-wait_for_seconds(1)
-hub.light_matrix.show_image('SAD')
-wait_for_seconds(1)
-</pre></code></span>
-	</blockquote></div></p>
-
-	<p><div class="instructions"><blockquote>
-<span><code><pre>
-<b># Move Motors: Medium Motors on Ports A and B</b>
-from spike import PrimeHub, LightMatrix, Button, StatusLight, ForceSensor, MotionSensor, Speaker, ColorSensor, App, DistanceSensor, Motor, MotorPair
-from spike.control import wait_for_seconds, wait_until, Timer
-
-hub = PrimeHub()
-
-motorA = Motor('A')
-motorB = Motor('B')
-
-motorA.start_at_power(30)
-motorB.start_at_power(60)
-
-wait_for_seconds(5)
-
-motorA.stop()
-motorB.stop()
-</pre></code></span>
-	</blockquote></div></p>
-
-	<br><hr><br>
-
-	<p><b>Disclaimer</b></p>
-
-	<p>LEGO®, the LEGO® logo, the Brick, MINDSTORMS®, SPIKE™, and the Minifigure are trademarks of ©The LEGO® Group. All other trademarks and copyrights are the property of their respective owners. All rights reserved.</p>
-
-	<p>This page isn’t affiliated, authorized, or endorsed by The LEGO Group.</p>
-
-    </body>
-    
-    <!-- SCRIPTS THAT MAKE THIS RUN -->
-    <script>
-        /* global objects */
-        var editor = ace.edit("editor");
-        var mySPIKE = document.getElementById("service_SPIKE").getService();
-
-		var documentation = document.getElementById("documentation_SPIKE");
-        documentation.addEventListener("click", function () {
-            var url = "https://tufts-cr-for-lego.codingrooms.com/documentation/SPIKE_Prime_Python_Knowledge_Base.htm"
-            window.open(url);
-        })
-
-		var buttonSaveAndExecute = document.getElementById("saveandexecute");
-        buttonSaveAndExecute.addEventListener("click", function () {
-            
-            // stop any currently running program
-            mySPIKE.stopCurrentProgram();
-                
-            // get text content with Ace.js API
-            var editSession = editor.getSession();
-            var codeSession = editSession.getValue();
-
-
-            // write program to brick
-            mySPIKE.writeProgram("MyCode", codeSession, 0, async function () {
-                // execute program
-                mySPIKE.executeProgram(0);
-            });
-        })
-
-        // save program sequence
-        var buttonSave = document.getElementById("save");
-        buttonSave.addEventListener("click", function () {
-            
-            // get text content with Ace.js API
-            var editSession = editor.getSession();
-            var codeSession = editSession.getValue();
-
-            // write program to brick
-            mySPIKE.writeProgram("MyCode", codeSession, 0, async function () {
-                // stop any currently running program
-                mySPIKE.stopCurrentProgram();
-            });
-        })
-        
-        // execute program sequence
-        var buttonExecute = document.getElementById("execute");
-        buttonExecute.addEventListener("click", function () {
-            mySPIKE.stopCurrentProgram();
-            mySPIKE.executeProgram(0);
-        })
-
-        var buttonStop = document.getElementById("stop");
-        buttonStop.addEventListener("click", function () {
-            mySPIKE.stopCurrentProgram();
-        })
-    </script>
-</html>
+</body>
