@@ -18,6 +18,24 @@ To enable these flags:
 - Relaunch the browser to have changes take effect
 - Reload/revisit the interface page and activate the SPIKE™ Prime Service Dock
 
+# Examples
+
+## [Web IDE](https://edanahy.github.io/WebSPIKE/WebIDE/)
+
+**Description:** A browser-based Python IDE for programming the SPIKE Prime.
+
+## [Vampire Eyes](https://edanahy.github.io/WebSPIKE/VampireEyes/)
+
+**Description:** A halloween-themed example of polling a SPIKE input and moving in-browser images.
+
+## [Balloon Pop](https://edanahy.github.io/WebSPIKE/BalloonPop/)
+
+**Description:** Triggering images and sound when a SPIKE Force Sensor is pushed.
+
+## [Pong](https://edanahy.github.io/WebSPIKE/Pong/)
+
+**Description:** Simple in-browser Pong Game controlled by motors. Supports multiple SPIKE Prime Hubs.
+
 # Disclaimer
 LEGO®, the LEGO® logo, the Brick, MINDSTORMS®, SPIKE™, and the Minifigure are trademarks of ©The LEGO® Group. All other trademarks and copyrights are the property of their respective owners. All rights reserved.
 
