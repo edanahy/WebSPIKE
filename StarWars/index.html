@@ -1,0 +1,220 @@
+<!-- 
+Project Name: Star Wars
+Author: Ethan Danahy
+Last update: October 21st, 2021
+Description: Use a Chrome Browser and two SPIKE Prime hubs
+			 to play a Star Wars Game (motor on A, force on B)
+(C) Tufts Center for Engineering Education and Outreach (CEEO)
+-->
+<html>
+<head>
+	<title>Star Wars</title>
+    <!--TuftsCEEO ServiceDock-->
+    <script src="https://cdn.jsdelivr.net/gh/tuftsceeo/SPIKE-Web-Interface@1.0/cdn/ServiceDock.min.js"></script>
+    <style>
+        .character1 {
+	        width: 306px;
+	        height: 304px;
+	    }
+        .character2 {
+	        width: 306px;
+	        height: 304px;
+	    }
+	    .characters {
+		    position: absolute;
+		    width: 100%;
+		    bottom: 310px;
+	    }
+	    .char1div {
+		    position: absolute;
+		    right: 10px;
+		    bottom: 10px;
+	    }
+	    .char2div {
+		    position: absolute;
+		    left: 10px;
+		    bottom: 10px;
+	    }
+
+        .topToolbar {
+            background-color: rgb(243, 250, 254);
+            color: rgb(7, 23, 44);
+            position: relative;
+            width: 850px;
+            height: 70px;
+            border: solid;
+            border-width: 1px;
+            margin: auto;
+            display: inline-block;
+        }
+        .service {
+            position: relative;
+            float: left;
+            margin: 0px 10px 10px 0px;
+        }
+
+	</style>
+</head>
+<body style='background-color: #200b2f;'>
+
+	<div style='position: absolute; width: 100%; height: 100%; left: 0%; overflow: hidden;'>
+		<img src='Background.jpg' style='position: absolute; bottom: 0px; left:50%; transform: translateX(-960px);'>
+	</div>
+
+	<!--ServiceDock-->
+	<div id="topToolbar_container" align=center>
+	    <div id="topToolbar_SPIKE" class="topToolbar">
+	        <div style="position: relative; float:left; margin: 10px; text-align: center; top: 20%;">
+	            Connect 2 SPIKE&trade; Primes (with Motor on Port A, Force Sensor on Port B):
+	        </div>
+	        <service-spike id="service_SPIKE1" class="service" style="top: -5px;"></service-spike>
+	        <service-spike id="service_SPIKE2" class="service" style="top: -5px;"></service-spike>
+	        <div style="position: relative; float:left; margin: 10px; text-align: center; top: 20%;">
+	            <a href='' onclick="play_audio('sound_background'); return false;">Start background audio</a>
+	        </div>
+	    </div>
+	</div>
+
+	<br />
+
+	<div class='char2div' id='char2div'>
+		<img class='character2' id='character2down' src='Character2down.png' />
+		<img class='character2' id='character2up' src='Character2up.png' style='display: none;' />
+	</div>
+	<div class='char1div' id='char1div'>
+		<img class='character1' id='character1down' src='Character1down.png' />
+		<img class='character1' id='character1up' src='Character1up.png' style='display: none;' />
+	</div>
+
+	<br />
+
+	<!-- SOUND -->
+	<div align=center>
+		<audio id='sound_background' loop src="./Background.mp3">Your browser does not support the <code>audio</code> element.</audio>
+		<audio id='sound_Saber1up' src="./Saber1up.mp3">Your browser does not support the <code>audio</code> element.</audio>
+		<audio id='sound_Saber1down' src="./Saber1down.mp3">Your browser does not support the <code>audio</code> element.</audio>
+		<audio id='sound_Saber2up' src="./Saber2up.mp3">Your browser does not support the <code>audio</code> element.</audio>
+		<audio id='sound_Saber2down' src="./Saber2down.mp3">Your browser does not support the <code>audio</code> element.</audio>
+	</div>
+	
+</body>	
+
+<!-- SCRIPTS THAT MAKE THIS RUN -->
+<script>
+	// setup
+	var character1div = document.getElementById("char1div");
+	var character1up = document.getElementById("character1up");
+	var character1down = document.getElementById("character1down");
+	var character2div = document.getElementById("char2div");
+	var character2up = document.getElementById("character2up");
+	var character2down = document.getElementById("character2down");
+
+	var motor1 = null;
+	var force1 = null;
+	var motor2 = null;
+	var force2 = null;
+	var force_threshold = 5; // how hard to push to trigger response
+	
+	var char1_position = 'down';
+	var char2_position = 'down';
+
+	// setup SPIKE Service Dock
+	var mySPIKE1 = document.getElementById("service_SPIKE1").getService();
+	mySPIKE1.executeAfterInit(async function() {
+		// start polling sensors
+		motor1 = new mySPIKE1.Motor("A");
+		force1 = new mySPIKE1.ForceSensor("B");
+		poll_force1();
+		poll_motor1();
+	});
+	var mySPIKE2 = document.getElementById("service_SPIKE2").getService();
+	mySPIKE2.executeAfterInit(async function() {
+		// start polling sensors
+		motor2 = new mySPIKE2.Motor("A");
+		force2 = new mySPIKE2.ForceSensor("B");
+		poll_force2();
+		poll_motor2();
+	});
+	
+	function poll_force1() {
+		var force1_val = force1.get_force_newton();
+		if (force1_val > force_threshold && char1_position == 'down') {
+			char_move(1, 'up');
+		} else if (force1_val < force_threshold && char1_position == 'up') {
+			char_move(1, 'down');
+		}
+		setTimeout(poll_force1, 100);
+	}
+	function poll_motor1() {
+		var motor1_val = motor1.get_speed();
+		if (motor1_val != 0) {
+			char_move(1, 'side', motor1_val);
+		}
+		setTimeout(poll_motor1, 100);
+	}
+
+	function poll_force2() {
+		var force2_val = force2.get_force_newton();
+		if (force2_val > force_threshold && char2_position == 'down') {
+			char_move(2, 'up');
+		} else if (force2_val < force_threshold && char2_position == 'up') {
+			char_move(2, 'down');
+		}
+		setTimeout(poll_force2, 100);
+	}
+	function poll_motor2() {
+		var motor2_val = motor2.get_speed();
+		if (motor2_val != 0) {
+			char_move(2, 'side', motor2_val);
+		}
+		setTimeout(poll_motor2, 100);
+	}
+
+	// direction is 'up', 'down', 'side'
+	function char_move(char_num, direction, amount=0) {
+		var char_div, char_up, char_down;
+		var new_dir;
+		if (char_num == 1) {
+			char_div = character1div; char_up = character1up; char_down = character1down;
+			new_dir = char1_position;
+		} else {
+			char_div = character2div; char_up = character2up; char_down = character2down;
+			new_dir = char2_position;
+		}
+		if (direction == 'up') {
+			char_down.style.display = "none";
+			char_up.style.display = "block";
+			new_dir = 'up';
+			play_audio((char_num == 1)?'sound_Saber1up':'sound_Saber2up');
+		} else if (direction == 'down') {
+			char_up.style.display = "none";
+			char_down.style.display = "block";
+			new_dir = 'down'
+			play_audio((char_num == 1)?'sound_Saber1down':'sound_Saber2down');
+		} else if (direction == 'side') {
+			if (char_num == 1) {
+				var new_val = parseFloat(char_div.style.right || 0) + amount;
+				// keep it inside the window!
+				if (new_val > 0 && new_val < window.innerWidth - 306) {
+					char_div.style.right = new_val + 'px';
+				}
+			}
+			if (char_num == 2) {
+				var new_val = parseFloat(char_div.style.left || 0) + amount;
+				// keep it inside the window!
+				if (new_val > 0 && new_val < window.innerWidth - 306) {
+					char_div.style.left = new_val + 'px';
+				}
+			}
+		}
+		if (char_num == 1) { char1_position = new_dir; }
+		else { char2_position = new_dir; }
+	}
+
+	function play_audio(audio_name) {
+		var audio = document.getElementById(audio_name);
+		audio.play();
+	}
+	
+</script>
+</html>
