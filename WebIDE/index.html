@@ -263,7 +263,8 @@ motorB.stop()
             // get text content with Ace.js API
             var editSession = editor.getSession();
             var codeSession = editSession.getValue();
-
+	    // strip "/r" from variable
+	    codeSession = codeSession.replace(/\r/g, ""); // replace with nothing
 
             // write program to brick
             mySPIKE.writeProgram("MyCode", codeSession, 0, async function () {
@@ -279,6 +280,8 @@ motorB.stop()
             // get text content with Ace.js API
             var editSession = editor.getSession();
             var codeSession = editSession.getValue();
+	    // strip "/r" from variable
+	    codeSession = codeSession.replace(/\r/g, ""); // replace with nothing
 
             // write program to brick
             mySPIKE.writeProgram("MyCode", codeSession, 0, async function () {
