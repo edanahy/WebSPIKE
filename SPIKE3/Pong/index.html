@@ -78,7 +78,7 @@ function setup() {
 function monitor_sensor() {
 	// make sure they have loaded SPIKE Prime
 	if (window.pyrepl.isActive) {
-		// write out command to read touch sensor
+		// write out command to read motor speed
 		var command = "print('a' + 'a' + 'a' + str(port.port_getSensor(port.PORTA)[0]) + 'b' + 'b' + 'b')";
 		command += "\n";
 		command += "print('c' + 'c' + 'c' + str(port.port_getSensor(port.PORTB)[0]) + 'd' + 'd' + 'd')";
