@@ -1,0 +1,171 @@
+<!-- 
+Project Name: SPIKE Balloon Pop Webpage
+Author: Ethan Danahy
+Last update: October 21st, 2022
+Requires: SPIKE 3 Firmware
+Description: Use a Chrome Browser and SPIKE Prime (Force on Port D)
+			 to pop a virtual balloon (with sound effect!).
+(C) Tufts Center for Engineering Education and Outreach (CEEO)
+-->
+<html>
+<head>
+	<title>SPIKE Balloon Pop Webpage</title>
+    <!-- Gabriel Sessions' PyREPL Connection -->
+    <script defer="defer" src="https://cdn.jsdelivr.net/gh/gabrielsessions/pyrepl-js/build/main.js"></script>
+    <style>
+        .bottom_text {
+	        color: black;
+        }
+        .mainimage {
+	        width: 500px;
+	        height: 500px;
+	    }
+	    .animationimage {
+		    width: 500px;
+	        height: 500px;
+	        display: none;
+	    }
+	    .mainimageshift {
+	        position: absolute;
+	        left: 50%;
+	        transform: translate(-50%, 0%);
+        }
+
+        .topToolbar {
+            background-color: rgb(243, 250, 254);
+            color: rgb(7, 23, 44);
+            position: relative;
+            width: 500px;
+            height: 70px;
+            border: solid;
+            border-width: 1px;
+            margin: auto;
+            display: inline-block;
+        }
+	</style>
+</head>
+<body onload='setup();'>
+
+	<h1>Balloon Pop</h1>
+
+	<!-- SPIKE PRIME (SPIKE 3) PyREPL Connection -->
+	<div align=center>
+		<div class="topToolbar">
+	        <div style="position: relative; float:left; margin: 20px; text-align: center; top: 20%;">
+	            Connect SPIKE&trade; 3 (with Force Sensor in Port D):
+	        </div>
+	        <div id="root"></div>
+	    </div>
+	</div>
+
+	<br />
+	
+	<div align=center>
+		<img class='mainimage' id='mainimage' src='Balloon.jpg' onclick='do_pop();' />
+		<img class='animationimage' id='animationimage' src='' />
+	</div>
+
+	<br />
+
+	<!-- SOUND -->
+	<div align=center>
+		<audio controls id='sound'
+		    src="./BalloonPop.mp3">Your browser does not support the <code>audio</code> element.
+		</audio>
+	</div>
+	
+	<hr />
+
+	<p class="bottom_text"><b>Disclaimer</b></p>
+
+	<p class="bottom_text">LEGO®, the LEGO® logo, the Brick, MINDSTORMS®, SPIKE™, and the Minifigure are trademarks of ©The LEGO® Group. All other trademarks and copyrights are the property of their respective owners. All rights reserved.</p>
+
+	<p class="bottom_text">This page isn’t affiliated, authorized, or endorsed by The LEGO Group.</p>
+
+</body>	
+
+<!-- SCRIPTS THAT MAKE THIS RUN -->
+<script lang='javascript'>
+	// setup
+	var mainimage = document.getElementById("mainimage");
+	var animationimage = document.getElementById("animationimage");
+	var force_sensor = null;
+	var force_sensor_port = "port.PORTD";
+	var force_threshold = 5; // how hard to push to trigger response
+	var timeout_delay = 100;
+	var repl_timout_delay = 50;
+
+	function setup() {
+		if (window.pyrepl && window.pyrepl.isActive) {
+			console.log('SPIKE Connected: SETUP SPIKE 3');
+			window.pyrepl.write = "import motor, force_sensor, port";
+			setTimeout(monitor_sensor, timeout_delay);
+		} else {
+			// PYREPL not ready
+			// check back to do setup
+			setTimeout(setup, timeout_delay);
+		}		
+	}
+
+	function monitor_sensor() {
+		// make sure they have loaded SPIKE Prime
+		if (window.pyrepl.isActive) {
+			// write out command to read touch sensor
+			var command = "print('a' + 'a' + 'a' + str(force_sensor.get_force(" + force_sensor_port + ")) + 'b' + 'b' + 'b')";
+			window.pyrepl.write = command;
+			// monitor console for reply
+			setTimeout(() => {
+				// parse string
+				let consoleOut = window.pyrepl.read;
+				// find value
+				var current_force_val = -1;
+				for (i=consoleOut.length - 1; i>=0; i--) {
+					if (consoleOut[i].includes('aaa')) {
+						// console.log('found value at ' + i.toString() + ': ' + consoleOut[i]);
+						var start_loc = consoleOut[i].indexOf('aaa') + 3;
+						var end_loc = consoleOut[i].indexOf('bbb');
+						current_force_val = parseFloat(consoleOut[i].substring(start_loc, end_loc));
+						current_force_val = current_force_val / 10; // to get Newtons
+						console.log('FORCE VAL: ' + current_force_val);
+						break;
+					}
+				}
+				// clear console
+				window.pyrepl.clearConsole;
+				// if value is high, then pop
+				if (current_force_val > force_threshold) {
+					console.log('DO POP');
+					do_pop()
+					return 0; // because do_pop will restart monitor
+				} else {
+					// not valid force value, so reset sensor monitor
+					setTimeout(monitor_sensor, timeout_delay);
+				}
+			}, repl_timout_delay);
+			return 0; // because timeout will restart monitor sensor
+		}
+		setTimeout(monitor_sensor, timeout_delay);
+	}
+
+	function do_pop() {
+		mainimage.style.display = "none";
+		animationimage.style.display = "block";
+		animationimage.src = "BalloonPop.gif"; // this will load image and play gif
+		setTimeout(play_audio, 500); // slight delay to try and line up sound with image
+		setTimeout(reset_images, 2000);
+		// start monitoring again
+		setTimeout(monitor_sensor, 2000);
+	}
+	function play_audio() {
+		var audio = document.getElementById("sound");
+		audio.play();
+	}
+	// reset back to original page load (show static image, hide gif)
+	function reset_images() {
+		mainimage.style.display = "block";
+		animationimage.style.display = "none";
+		animationimage.src = ""; // clearing src will force reload next time
+	}
+	
+</script>
+</html>

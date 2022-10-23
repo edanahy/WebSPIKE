@@ -1,0 +1,103 @@
+<html>
+	<head>
+		<style>
+			.pressed_yes { background-color: #59FFBA; }
+			.pressed_no { background-color: #FFBCC7; }
+		</style>
+		<script lang="javascript">
+			var check_num = 0;
+			var output_div = "output"
+
+			// FUNCTIONS FOR DISPLAYING BUTTON AND AXES STATES
+			// - return HTML strings to insert into webpage
+			function button_state(buttons) {
+				var output = "";
+				output += "<table border=1 cellspacing=3 cellpadding=3><tr>";
+				for (i=0; i<buttons.length; i++) {
+					if (i>0 && i%4 == 0) {
+						output += "</tr><tr>";
+					}
+					output += "<td class=";
+					if (buttons[i].pressed) { output += "'pressed_yes'"; }
+					else { output += "'pressed_no'"; }
+					output+= ">Button " + i + ": " + buttons[i].pressed + "</td>";
+				}
+				output += "</tr></table>"
+				return output;
+			}
+			function axes_state(axes) {
+				var output = "";
+				box_size = 200;
+				output += "<table border=1 cellspacing=3 cellpadding=3><tr><td width=" + box_size + "px height=" + box_size + "px valign=top>"
+				// first pair of axes
+				output += "<div width='100%' height='100%' style='position: relative;'>"
+				// axes are -1 to 1, so scale to 300...
+				left_val = ((axes[0] + 1) / 2) * box_size - 5;
+				top_val = ((axes[1] + 1) / 2) * box_size - 5;
+				output += "	 <div class='pressed_no' style='position: absolute; width: 10px; height: 10px; top: " + top_val + "px; left: " + left_val + "px;'>&nbsp;</div>"
+				output += "</div>"
+				output += "</td><td width=" + box_size + "px height=" + box_size + "px valign=top>"
+				// second pair of axes
+				output += "<div width='100%' height='100%' style='position: relative;'>"
+				// axes are -1 to 1, so scale to 300...
+				left_val = ((axes[2] + 1) / 2) * box_size - 5;
+				top_val = ((axes[3] + 1) / 2) * box_size - 5;
+				output += "	 <div class='pressed_no' style='position: absolute; width: 10px; height: 10px; top: " + top_val + "px; left: " + left_val + "px;'>&nbsp;</div>"
+				output += "</div>"
+				output += "</td></tr></table>"
+				output += "<ul>";
+				for (i=0; i<axes.length; i++) {
+					output += "<li>Axis " + i + ": " + axes[i] + "</li>";
+				}
+				output += "</ul>";
+				return output;
+			}
+			
+			// MAIN "CHECK THE GAME PAD" LOOP
+			function check_gp() {
+				check_num++;
+				output_destination = document.getElementById(output_div);
+				gp = navigator.getGamepads()[0];
+
+				var output = "Check #" + check_num + "<br />Gamepad is: " + gp;
+				if (gp) {
+					output += "<br />Gamepad is NOT NULL<br />";
+					// make main table to hold info:
+					output += "<table border=0 cellspacing=5><tr><td valign='top'>";
+					
+					// GAMEPAD BUTTONS
+					output += "<p><h2>Buttons:</h2>" + button_state(gp.buttons) + "</p>";
+					
+					// next column of main table:
+					output += "</td><td valign='top'>"
+					
+					// GAMEPAD AXES
+					output += "<p><h2>Axes:</h2>" + axes_state(gp.axes) + "</p>";
+					
+					// end main table
+					output += "</td></tr></table>";
+				}
+				output_destination.innerHTML = output;
+				setTimeout(check_gp, 100);
+				return gp;
+			}
+		</script>
+	</head>
+	<body onload='check_gp();'>
+
+	<h1>Check Gamepad Controller</h1>
+	
+	<p><em>Instructions:</em> press button on gamepad to activate</p>
+	
+	<!-- DESTINATION DIV for GAMEPAD INFO -->
+	<div id='output' border=1>
+	</div>		
+
+	<p>Web Docs:<a href='https://developer.mozilla.org/en-US/docs/Web/API/Gamepad_API/Using_the_Gamepad_API' target=_blank>Using the Gamepad API</a></p>
+
+	<p align="center">
+		<img src='./gamepad.jpg' align="middle"/>
+	</p>
+
+	</body>
+</html>

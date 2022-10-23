@@ -1,0 +1,204 @@
+<!-- 
+Project Name: Simple SPIKE Prime Web Interface
+Author: Ethan Danahy
+Last update: October 21st, 2022
+Requires: SPIKE 3 Firmware
+Description: Use a Chrome Browser and custom webpage to
+			 execute code on the SPIKE Prime hub (SPIKE 3)
+History: 
+    Based on SPIKE 2 version by Jeremy Jung and Ethan Danahy
+    Updated to SPIKE 3 by Ethan Danahy based on example by Gabriel Sessions
+(C) Tufts Center for Engineering Education and Outreach (CEEO)
+-->
+<html>
+    <head>
+	    <title>SPIKE Prime Web IDE</title>
+	    <!-- Gabriel Sessions' PyREPL Connection -->
+	    <script defer="defer" src="https://cdn.jsdelivr.net/gh/gabrielsessions/pyrepl-js/build/main.js"></script>
+        <!--IDE API-->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.min.js"></script>
+        <style>
+	      	.instructions {
+				padding: 5px;
+				background-color: lightyellow;
+			}
+	        #editor {
+		        border: 1px black solid;
+	            position: relative;
+	            left: 10px;
+	            height: 300px;
+	            width: 700px;
+	        }
+	        .topToolbar {
+	            background-color: rgb(243, 250, 254);
+	            color: rgb(7, 23, 44);
+	            position: relative;
+	            width: 300px;
+	            height: 70px;
+	            border: solid;
+	            border-width: 1px;
+	            margin: auto;
+	            display: inline-block;
+	        }
+	        
+	        .service {
+	            position: relative;
+	            float: left;
+	            margin: 0px 10px 10px 0px;
+	        }
+	
+	        .service:focus,
+	        .documentation:focus,
+	        .tooltip:focus {
+	            outline: 0;
+	        }
+
+			/* toolTip CSS from w3schools */
+
+	        /* Tooltip container */
+	        .tooltip {
+	            position: relative;
+	            display: inline-block;
+	        }
+	
+	        /* Tooltip text */
+	        .tooltip .tooltiptext {
+	            visibility: hidden;
+	            width: 190%;
+	            background-color: #555;
+	            color: #fff;
+	            text-align: center;
+	            padding: 5px 0;
+	            border-radius: 6px;
+	
+	            /* Position the tooltip text */
+	            position: absolute;
+	            top: 30px;
+	            z-index: 1;
+	            left: 10%;
+	
+	            /* Fade in tooltip */
+	            opacity: 0;
+	            transition: opacity 0.3s;
+	            transition-delay: 0.5s;
+	        }
+	
+	        /* Show the tooltip text when you mouse over the tooltip container */
+	        .tooltip:hover .tooltiptext {
+	            visibility: visible;
+	            opacity: 1;
+	        }
+		</style>
+    </head>
+    <body>
+	    
+	<h1>SPIKE Prime Web-IDE Interface</h1>
+
+    <!--Instructions-->
+	<div class="instructions">
+		<!-- SPIKE PRIME (SPIKE 3) PyREPL Connection -->
+		<div align=center>
+			<div class="topToolbar">
+		        <div style="position: relative; float:left; margin: 20px; text-align: center; top: 20%;">
+		            Connect to SPIKE&trade; 3:
+		        </div>
+		        <div id="root"></div>
+		    </div>
+		</div>
+	</div>
+	
+	<br><hr>
+	
+    <!--GUI-->
+    <div id = "demobox">
+	    <input type="button" id="execute" value="Execute">
+        <input type="button" id="stop" value="Stop">
+        <br><br>
+        <!-- ####         ***         Code editor          ***        #### -->
+        <!-- #### CHANGE THIS CODE TO CHANGE DEFAULT SPIKE PRIME CODE #### -->
+        <div id="editor"># Sample Code
+import display
+# Write "Hi There" on the 5x5 display.
+# Make the animation take 2 seconds.
+# Set the brightness of each letter to 100
+display.display_text_for_time("Hi There", 2000, 100)
+</div>
+        </div>
+
+	<br><hr><br>
+
+	<p><b>Sample Code</b> (<a href='https://spike3-docs.web.app/' target=_blank>here is SPIKE 3 Python Documentation</a>)</p>
+
+	<p><div class="instructions"><blockquote>
+<span><code><pre>
+<b># Default Program</b>
+import display
+# Write "Hi There" on the 5x5 display.
+# Make the animation take 2 seconds.
+# Set the brightness of each letter to 100
+display.display_text_for_time("Hi There", 2000, 100)
+</pre></code></span>
+	</blockquote></div></p>
+
+	<p><div class="instructions"><blockquote>
+<span><code><pre>
+<b># Test Hub: Happy and Sad</b>
+import display, time
+
+# see <a href='https://docs.google.com/document/d/1m2BSe43-q8vxN7as5mN_ojofSZisrvGawrcCIzOj-eI/' target=_blank>picture documentation</a>
+
+for i in range(4):
+	display.display_show_pictogram(3) # pic 3 is HAPPY
+	time.sleep(0.5)
+	display.display_show_pictogram(5) # pic 5 is SAD
+	time.sleep(0.5)
+display.display_clear()
+</pre></code></span>
+	</blockquote></div></p>
+
+	<p><div class="instructions"><blockquote>
+<span><code><pre>
+<b># Move Motors: Medium Motors on Ports A and B</b>
+import motor, port, time
+
+motor.motor_move_at_speed(port.PORTA, 10000)
+motor.motor_move_at_speed(port.PORTB, 5000)
+time.sleep(5)
+motor.motor_stop()
+</pre></code></span>
+	</blockquote></div></p>
+
+	<br><hr><br>
+
+	<p><b>Disclaimer</b></p>
+
+	<p>LEGO®, the LEGO® logo, the Brick, MINDSTORMS®, SPIKE™, and the Minifigure are trademarks of ©The LEGO® Group. All other trademarks and copyrights are the property of their respective owners. All rights reserved.</p>
+
+	<p>This page isn’t affiliated, authorized, or endorsed by The LEGO Group.</p>
+
+    </body>
+    
+    <!-- SCRIPTS THAT MAKE THIS RUN -->
+    <script>
+        /* global objects */
+        var editor = ace.edit("editor");
+
+        // execute program sequence
+        var buttonExecute = document.getElementById("execute");
+        buttonExecute.addEventListener("click", function () {
+			// get text content with Ace.js API
+            var editSession = editor.getSession();
+            var codeSession = editSession.getValue();
+			// write out command to SPIKE Prime
+			window.pyrepl.write = codeSession;
+        })
+
+        var buttonStop = document.getElementById("stop");
+        buttonStop.addEventListener("click", function () {
+            // issue a Control-C to exit code
+            window.pyrepl.stop;
+            // issues a motor stop in case motors are still running
+            window.pyrepl.write = "import motor\nmotor.motor_stop()"
+        })
+    </script>
+</html>

@@ -1,0 +1,176 @@
+<!-- 
+Project Name: SPIKE Eyes Interface
+Author: Ethan Danahy
+Last update: October 21st, 2022
+Requires: SPIKE 3 Firmware
+Description: Use a Chrome Browser and SPIKE Prime to
+			 control a pair of eyes on the screen.
+(C) Tufts Center for Engineering Education and Outreach (CEEO)
+-->
+<html>
+    <head>
+	    <title>SPIKE Eyes Interface</title>
+	    <!-- Gabriel Sessions' PyREPL Connection -->
+	    <script defer="defer" src="https://cdn.jsdelivr.net/gh/gabrielsessions/pyrepl-js/build/main.js"></script>
+        <style>
+	        .bottom_text {
+		        color: #ffff;
+	        }
+	        .mainimage {
+		        width: 820px;
+		        height: 820px;
+		    }
+		    .mainimageshift {
+		        position: absolute;
+		        left: 50%;
+		        transform: translate(-50%, 0%);
+	        }
+		</style>
+    </head>
+    <body bgcolor="black">
+	    
+		<table><tr>
+			<td>
+				<!-- SPIKE PRIME (SPIKE 3) PyREPL Connection -->
+				<div align=center><div id="root"></div></div>
+			</td>
+			<td>
+				<select name="input" id="spike_input">
+				  <option value="accelerometer">Accelerometer in Hub</option>
+				  <option value="motor">Motor on A</option>
+				  <!-- <option value="distance">Distance on B</option> -->
+				</select>
+			</td>
+			<td>
+				<button onclick="setup()">Start Monitoring</button>
+			</td>
+			<td>
+				<span class="bottom_text" id="value"></span>
+			</td>
+		</tr></table>
+
+		<div class="mainimage">
+			<div class="mainimage mainimageshift">
+				<img src="vampire_head.png" style="position:absolute;">
+				<img id="vampire_eyes" src="vampire_eyes.png" style="position:absolute;">
+			</div>
+		</div>
+
+		<hr>
+	
+		<p class="bottom_text"><b>Disclaimer</b></p>
+	
+		<p class="bottom_text">LEGO®, the LEGO® logo, the Brick, MINDSTORMS®, SPIKE™, and the Minifigure are trademarks of ©The LEGO® Group. All other trademarks and copyrights are the property of their respective owners. All rights reserved.</p>
+	
+		<p class="bottom_text">This page isn’t affiliated, authorized, or endorsed by The LEGO Group.</p>
+
+    </body>
+    
+    <!-- SCRIPTS THAT MAKE THIS RUN -->
+    <script lang='javascript'>
+		// setup
+		var min_val = 0;
+		var max_val = 100;
+		var sensor = null;
+		var sensor_func = null;
+		var timeout_delay = 100;
+		var repl_timout_delay = 50;
+		var mode_selector = null;
+		var mode = null;
+
+		function setup() {
+			if (window.pyrepl && window.pyrepl.isActive) {
+				console.log('SPIKE Connected: SETUP SPIKE 3');
+				window.pyrepl.write = "import imu, motor, port\nimu.zeroOrientation()";
+				start_monitoring();
+			} else {
+				// PYREPL not ready
+				// check back to do setup
+				setTimeout(setup, timeout_delay);
+			}
+		}
+
+	    function start_monitoring() {
+		    mode_selector = document.getElementById("spike_input");
+			mode = mode_selector.options[mode_selector.selectedIndex].value;
+			console.log('MODE: ' + mode);
+		    if (mode == 'accelerometer') {
+			    window.pyrepl.write = "imu.zeroOrientation()"; // reset IMU
+			    sensor_func_code = "print('a' + 'a' + 'a' + str(imu.getOrientation()[1] / 10) + 'b' + 'b' + 'b')";
+			    min_val = -90;
+			    max_val = 90;
+			    setTimeout(monitor_sensor, timeout_delay);
+		    } else if (mode == 'motor') {
+			    sensor_func_code = "print('a' + 'a' + 'a' + str(port.port_getSensor(port.PORTA)[1]) + 'b' + 'b' + 'b')";
+			    min_val = -180;
+			    max_val = 180;
+				setTimeout(monitor_sensor, timeout_delay);
+		    } else if (mode == 'distance') {
+			    // NOT YET IMPLEMENTED
+			    sensor_func_code = "";
+			    min_val = 0
+			    max_val = 1
+			    setTimeout(monitor_sensor, timeout_delay);
+		    } else {
+			    alert('MODE NOT RECOGNIZED.')
+		    }
+	    }
+	    
+	    // check sensor value and move eyes accordingly
+	    function monitor_sensor() {
+			// make sure they have loaded SPIKE Prime
+			if (window.pyrepl.isActive) {
+				// write out command to read touch sensor
+				window.pyrepl.write = sensor_func_code;
+				// monitor console for reply
+				// monitor console for reply
+				setTimeout(() => {
+					// parse string
+					let consoleOut = window.pyrepl.read;
+					// find value
+					var current_sensor_val = null;
+					for (i=consoleOut.length - 1; i>=0; i--) {
+						if (consoleOut[i].includes('aaa')) {
+							// console.log('found value at ' + i.toString() + ': ' + consoleOut[i]);
+							var start_loc = consoleOut[i].indexOf('aaa') + 3;
+							var end_loc = consoleOut[i].indexOf('bbb');
+							current_sensor_val = parseFloat(consoleOut[i].substring(start_loc, end_loc));
+							break;
+						}
+					}
+					// clear console
+					window.pyrepl.clearConsole;
+					if (current_sensor_val != null) {
+						process_sensor_val(current_sensor_val);
+						return 0; // because process_sensor_val will restart monitor
+					} else {
+						setTimeout(monitor_sensor, timeout_delay);
+					}
+				}, repl_timout_delay);
+				return 0; // because timeout will restart monitor sensor
+			}
+			setTimeout(monitor_sensor, timeout_delay);
+		}
+
+		function process_sensor_val(sensor_value) {
+			document.getElementById("value").innerHTML = sensor_value;
+		    if (sensor_value != 'none') {
+			    sensor_value = Math.min(Math.max(parseFloat(sensor_value), min_val), max_val);
+				move_eyes((sensor_value - min_val)/(max_val - min_val));
+			}
+			setTimeout(monitor_sensor, 300); // recheck sensor
+	    }
+	    
+	    // move eyes across screen by a certain percent
+	    // - new_percent is between 0 and 1
+	    function move_eyes (new_percent) {
+		    var vampire_eyes = document.getElementById("vampire_eyes");
+		    var min_translate_position = 0;
+		    var max_translate_position = 200; // total size of translate shift
+		    var translate_amount = new_percent * (max_translate_position - min_translate_position) + min_translate_position;
+		    // update the location of eyes
+			vampire_eyes.style.transform = "translate(" + Number.parseInt(translate_amount) + "px, 0px)";
+	    }
+	    
+    </script>
+</html>

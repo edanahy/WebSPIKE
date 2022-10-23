@@ -1,12 +1,16 @@
 <!-- 
 Projects: Various SPIKE Prime Webpage Interfaces
 Author: Ethan Danahy
-Last update: October 2021
+Last update: October 2022
 Description: These examples use a Chrome Browser and the Tufts CEEO's
-			 SPIKE Prime Service Dock to interact with the SPIKE Prime
-			 Hardware.
+			 SPIKE Prime Web-Based Communication to interact with the
+			 SPIKE Prime Hardware.
+Note: some examples use SPIKE 2 (via Service Dock)
+	  and some examplse use SPIKE 3 (via PyREPL JS)
 For more information about the CEEO's SPIKE Prime Service Dock:
 - https://tuftsceeo.github.io/SPIKE-Web-Interface/
+For more information about the GabrielSessions's PyREPL JS API:
+- https://github.com/GabrielSessions/pyrepl-js
 (C) Tufts Center for Engineering Education and Outreach (CEEO)
 -->
 <html>
@@ -16,6 +20,10 @@ For more information about the CEEO's SPIKE Prime Service Dock:
 		.bottom_text {
 	        color: black;
         }
+      	.instructions {
+			padding: 5px;
+			background-color: lightyellow;
+		}
 	</style>
 </head>
 <body>
@@ -23,41 +31,193 @@ For more information about the CEEO's SPIKE Prime Service Dock:
 	<h1>Web Interfaces for SPIKE Prime</h1>
 	
 	<p><b>Description:</b> A collection of example projects using a Web Browser for interacting with SPIKE Prime.</p>
-	
-	<p>This is achieved using the <a href='https://tuftsceeo.github.io/SPIKE-Web-Interface/' target=_blank>Service Dock
-		for SPIKE Prime</a> JavaScript interface created by <a href='http://ceeoinnovations.com' target=_blank>Tufts CEEO</a>.</p>
 
-	<p>For the Github Repository of these projects: <a href="https://github.com/edanahy/WebSPIKE">https://github.com/edanahy/WebSPIKE</a></p>
+	<p>
+		<table cellpadding=5><tr>
+			<td><img src='./imgs/SPIKE2.png' height='100px'></td>
+			<td valign=middle>
+				<h2>SPIKE 2</h2>
+				<p>SPIKE 2 examples achieved using the
+					<a href='https://tuftsceeo.github.io/SPIKE-Web-Interface/' target=_blank>Service Dock
+					for SPIKE Prime</a> JavaScript interface created by
+					<a href='http://ceeoinnovations.com' target=_blank>Tufts CEEO</a>.
+			</td>
+		</tr><tr>
+			<td><img src='./imgs/SPIKE3.png' height='100px'></td>
+			<td valign=middle>
+				<h2>SPIKE 3</h2>
+				<p>SPIKE 3 examples achieved using the
+					<a href='https://github.com/GabrielSessions/pyrepl-js' target=_blank>PyREPL JS</a>
+					web-based extension created by
+					<a href='https://github.com/gabrielsessions/' target=_blank>Gabriel Sessions</a>.</p>
+				<p class='instructions' style='color:red;'><b>Note:</b> SPIKE 3 still in <em>beta</em> so all code, protocols, examples, etc subject to change without notice.</p>
+
+			</td>
+		</tr></table>
+	</p>
+
 	
-	<p>For "Remote SPIKE" (controlling a remote SPIKE Prime over the internet) examples: <a href="https://github.com/edanahy/HelloSPIKE">https://github.com/edanahy/HelloSPIKE</a></p>
+	<p>For the Github Repository (source code) of all these projects: <a href="https://github.com/edanahy/WebSPIKE">https://github.com/edanahy/WebSPIKE</a></p>
+	
+	<p><em>Bonus:</em> For "Remote SPIKE" (controlling a remotely located SPIKE Prime over the internet) examples: <a href="https://github.com/edanahy/HelloSPIKE">https://github.com/edanahy/HelloSPIKE</a></p>
 	
 	<h2>List of Examples</h2>
-	
+
 	<blockquote>
+
+		<table cellspacing=5 cellpadding=5>
+
+		<tr>
+			<td><img src='./imgs/WebIDE.png'></td>
+			<td valign=top>
+				<h2>Web IDE</h2>
+				
+				<p><b>Description:</b> A browser-based Python IDE for programming the SPIKE Prime.</p>
+				
+				<p>
+					<table><tr><td><img src='./imgs/SPIKE2.png' height='50px'></td>
+					<td valign=middle><a href="./WebIDE/" target="_blank">SPIKE 2 Example</a></td></tr></table>
+				</p>
 	
-		<h3><a href="./WebIDE/" target="_blank">Web IDE</a></h3>
-		
-		<p><b>Description:</b> A browser-based Python IDE for programming the SPIKE Prime.</p>
-		
-		<h3><a href="./VampireEyes/" target="_blank">Vampire Eyes</a></h3>
-		
-		<p><b>Description:</b> A halloween-themed example of polling a SPIKE input and moving in-browser images.</p>
-		
-		<h3><a href="./BalloonPop/" target="_blank">Balloon Pop</a></h3>
-		
-		<p><b>Description:</b> Triggering images and sound when a SPIKE Force Sensor is pushed.</p>
+				<p>
+					<table><tr><td><img src='./imgs/SPIKE3.png' height='50px'></td>
+					<td valign=middle><a href="./SPIKE3/WebIDE/" target="_blank">SPIKE 3 Example</a></td></tr></table>
+				</p>
+			</td>
+		</tr>
 
-		<h3><a href="./Pong/" target="_blank">Pong</a></h3>
+		<tr>
+			<td><img src='./imgs/GamePad.png'></td>
+			<td valign=top>
+				<h2>GamePad</h2>
+				
+				<p><b>Description:</b> Use a GamePad to control the SPIKE Prime.</p>
+				
+				<p>
+					<table><tr><td><img src='./imgs/SPIKE2.png' height='50px'></td>
+					<td valign=middle>SPIKE 2 example not available.</td></tr></table>
+				</p>
+	
+				<p>
+					<table><tr><td><img src='./imgs/SPIKE3.png' height='50px'></td>
+					<td valign=middle><a href="./SPIKE3/GamePad/" target="_blank">SPIKE 3 Example</a></td></tr></table>
+				</p>
+			</td>
+		</tr>
 		
-		<p><b>Description:</b> Simple in-browser Pong Game controlled by motors. Supports multiple SPIKE Prime Hubs.</p>
+		<tr>
+			<td><img src='./imgs/VampireEyes.png'></td>
+			<td valign=top>
+				<h2>Vampire Eyes</h2>
 
-		<h3><a href="./StarWars/" target="_blank">Star Wars</a></h3>
+				<p><b>Description:</b> A halloween-themed example of polling a SPIKE sensor input and moving in-browser images.</p>
+	
+				<p>
+					<table><tr><td><img src='./imgs/SPIKE2.png' height='50px'></td>
+					<td valign=middle><a href="./VampireEyes/" target="_blank">SPIKE 2 Example</a></td></tr></table>
+				</p>
+	
+				<p>
+					<table><tr><td><img src='./imgs/SPIKE3.png' height='50px'></td>
+					<td valign=middle><a href="./SPIKE3/VampireEyes/" target="_blank">SPIKE 3 Example</a></td></tr></table>
+				</p>
+			</td>
+		</tr>
 		
-		<p><b>Description:</b> Control Star Wars characters using Motor and Force Sensor. Requires two SPIKE Prime Hubs.</p>
+		<tr>
+			<td><img src='./imgs/BaloonPop.gif'></td>
+			<td valign=top>
+				<h2>Balloon Pop</h2>
+		
+				<p><b>Description:</b> Triggering images and sound when a SPIKE Force Sensor is pushed.</p>
+	
+				<p>
+					<table><tr><td><img src='./imgs/SPIKE2.png' height='50px'></td>
+					<td valign=middle><a href="./BalloonPop/" target="_blank">SPIKE 2 Example</a></td></tr></table>
+				</p>
+	
+				<p>
+					<table><tr><td><img src='./imgs/SPIKE3.png' height='50px'></td>
+					<td valign=middle><a href="./SPIKE3/BalloonPop/" target="_blank">SPIKE 3 Example</a></td></tr></table>
+				</p>
+			</td>
+		</tr>
 
-		<h3><a href="./ReactionGame/" target="_blank">Reaction Game</a></h3>
+		<tr>
+			<td><img src='./imgs/Pong.gif'></td>
+			<td valign=top>
+				<h2>Pong</h2>
 		
-		<p><b>Description:</b> A two-player "reaction game" to see who can match images the fastest.  Requires three SPIKE Primes.</p>
+				<p><b>Description:</b> Simple in-browser Pong Game controlled by SPIKE Motors.</p>
+	
+				<p>
+					<table><tr><td><img src='./imgs/SPIKE2.png' height='50px'></td>
+					<td valign=middle>
+						<a href="./Pong/" target="_blank">SPIKE 2 Example</a><br />
+						<em>Supports 1 or 2 hubs</em>
+					</td></tr></table>
+				</p>
+	
+				<p>
+					<table><tr><td><img src='./imgs/SPIKE3.png' height='50px'></td>
+					<td valign=middle>
+						<a href="./SPIKE3/Pong/" target="_blank">SPIKE 3 Example</a><br />
+						<em>Only supports 1 hub</em>
+					</td></tr></table>
+				</p>
+			</td>
+		</tr>
+
+		<tr>
+			<td><img src='./imgs/StarWars.png'></td>
+			<td valign=top>
+				<h2>Star Wars</h2>
+		
+				<p><b>Description:</b> Control Star Wars characters using Motor and Force Sensor.</p>
+			
+				<p>
+					<table><tr><td><img src='./imgs/SPIKE2.png' height='50px'></td>
+					<td valign=middle>
+						<a href="./StarWars/" target="_blank">SPIKE 2 Example</a><br />
+						<em>Requires 2 hubs</em>
+					</td></tr></table>
+				</p>
+	
+				<p>
+					<table><tr><td><img src='./imgs/SPIKE3.png' height='50px'></td>
+					<td valign=middle>
+						<a href="./SPIKE3/StarWars/" target="_blank">SPIKE 3 Example</a><br />
+						<em>Only supports 1 hub</em>
+					</td></tr></table>
+				</p>
+			</td>
+		</tr>
+
+		<tr>
+			<td><img src='./imgs/ReactionGame.png'></td>
+			<td valign=top>
+				<h2>Reaction Game</h2>
+		
+				<p><b>Description:</b> A two-player "reaction game" to see who can match images the fastest.</p>
+				
+				<p>
+					<table><tr><td><img src='./imgs/SPIKE2.png' height='50px'></td>
+					<td valign=middle>
+						<a href="./ReactionGame/" target="_blank">SPIKE 2 Example</a><br />
+						<em>Requires 3 hubs</em>
+					</td></tr></table>
+				</p>
+	
+				<p>
+					<table><tr><td><img src='./imgs/SPIKE3.png' height='50px'></td>
+					<td valign=middle>
+						SPIKE 3 example not available.
+					</td></tr></table>
+				</p>
+			</td>
+		</tr>
+
+		</table>		
 	
 	</blockquote>
 

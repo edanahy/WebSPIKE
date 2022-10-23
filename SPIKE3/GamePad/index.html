@@ -1,0 +1,86 @@
+<html>
+	<head>
+		<!-- Gabriel Sessions' PyREPL Connection -->
+		<script defer="defer" src="https://cdn.jsdelivr.net/gh/gabrielsessions/pyrepl-js/build/main.js"></script>
+		<style>
+		    .bottom_text {
+		        color: black;
+		    }
+			.topToolbar {
+	            background-color: rgb(243, 250, 254);
+	            color: rgb(7, 23, 44);
+	            position: relative;
+	            width: 500px;
+	            height: 70px;
+	            border: solid;
+	            border-width: 1px;
+	            margin: auto;
+	            display: inline-block;
+	        }
+		</style>
+		<script lang="javascript">
+			var timeout_delay = 100;
+			function move_motors() {
+				// make sure they have loaded SPIKE Prime
+				if (window.pyrepl.isActive) {
+					gp = navigator.getGamepads()[0];
+					// if not null (make sure gamepad is active)
+					if (gp) {
+						// get controlled values and scale by 180
+						axisA_val = parseInt(gp.axes[0] * 180);
+						axisB_val = parseInt(gp.axes[2] * 180);
+						// move motors
+						window.pyrepl.write = "motor.motor_move_to_position(port.PORTA, " + axisA_val + ", 10000)";
+						window.pyrepl.write = "motor.motor_move_to_position(port.PORTB, " + axisB_val + ", 10000)";
+					}
+				}
+				setTimeout(move_motors, timeout_delay);
+			}
+			
+			function setup() {
+				if (window.pyrepl && window.pyrepl.isActive) {
+					window.pyrepl.write = "import motor, port";
+					setTimeout(move_motors, timeout_delay);
+				} else {
+					// PYREPL not ready
+					// check back to do setup
+					setTimeout(setup, timeout_delay);
+				}		
+			}
+		</script>
+	</head>
+	<body onload='setup();'>
+		<h1>Control SPIKE with a Gamepad</h1>
+		<p>
+			Web Docs: <a href='https://developer.mozilla.org/en-US/docs/Web/API/Gamepad_API/Using_the_Gamepad_API' target=_blank>Using the Gamepad API</a>
+			(<a href='gp_check.html' target='_blank'>Check if your gamepad is working!</a>)
+		</p>
+		
+		<!-- SPIKE PRIME (SPIKE 3) PyREPL Connection -->
+		<div align=center>
+			<div class="topToolbar">
+		        <div style="position: relative; float:left; margin: 20px; text-align: center; top: 20%;">
+		            Connect SPIKE&trade; 3 (with Motors in Port A and Port B):
+		        </div>
+		        <div id="root"></div>
+		    </div>
+		</div>
+		
+		<br /><br />
+		
+		<p align="center">
+			<img src='./gamepad.jpg' align="middle"/>
+		</p>
+
+		<br /><br />
+
+		<hr />
+	
+		<p class="bottom_text"><b>Disclaimer</b></p>
+	
+		<p class="bottom_text">LEGO®, the LEGO® logo, the Brick, MINDSTORMS®, SPIKE™, and the Minifigure are trademarks of ©The LEGO® Group. All other trademarks and copyrights are the property of their respective owners. All rights reserved.</p>
+	
+		<p class="bottom_text">This page isn’t affiliated, authorized, or endorsed by The LEGO Group.</p>
+
+	</body>
+</html>
