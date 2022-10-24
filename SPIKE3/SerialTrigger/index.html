@@ -36,7 +36,7 @@ Description: Use a Chrome Browser and SPIKE Prime to
 	    border-left: 3px solid #f36d33;
 	    color: #666;
 	    page-break-inside: avoid;
-		font-family: "Courier New" Courier monospace;
+		font-family: "Lucida Console", Courier, monospace;
 	    font-size: 15px;
 	    line-height: 1.6;
 	    margin-bottom: 1.6em;
@@ -44,6 +44,17 @@ Description: Use a Chrome Browser and SPIKE Prime to
 	    padding: 1em 1.5em;
 	    display: block;
 	    word-wrap: break-word;
+	}
+	.console_input {
+		width: 300px;
+		border: 1px black solid;
+		background: #f4f4f4;
+		border-left: 3px solid #f36d33;
+		color: #666;
+		font-family: "Lucida Console", Courier, monospace;
+		font-size: 15px;
+	    line-height: 1.6;
+	    padding: 1em 1.5em;
 	}
 	.keyword_line {
 		color: red;
@@ -64,7 +75,7 @@ Description: Use a Chrome Browser and SPIKE Prime to
     }
   </style>
 </head>
-<body onload='setup();'>
+<body onload="setup();">
 
 	<!-- SPIKE PRIME (SPIKE 3) PyREPL Connection -->
 	<div class="topToolbar">
@@ -82,10 +93,20 @@ Description: Use a Chrome Browser and SPIKE Prime to
 		<td valign="top" class='main_table' width='50%'>
 
 			<h1>Serial Feed</h1>
+			<p>
+				<button onclick='return window.pyrepl.stop;'>Emergency Stop</button>
+				<button onclick='return window.pyrepl.reboot;'>Reboot (into Slot Mode)</button>
+			</p>
+
 			<p>Number of lines in serial feed: <span id='num_lines'></span></p>
 			
 			<p align=center>
 				<pre width='90%' class='console' id='console'></pre>
+			</p>
+			
+			<p>
+				<input type=text class='console_input'>
+				<button onclick='window.pyrepl.write = this.parentElement.getElementsByTagName("input")[0].value;'>Submit to Serial</button>
 			</p>
 			
 		</td>
@@ -153,6 +174,10 @@ for i in range(4):
 	        window.pyrepl.write = "import motor\nmotor.motor_stop()";
 	    }
     });
+    
+    /////////////////
+    // PYREPL CODE //
+    /////////////////
 
 	var timeout_delay = 750;
 	var repl_timout_delay = 50;
@@ -166,7 +191,7 @@ for i in range(4):
 			// PYREPL not ready
 			// check back to do setup
 			setTimeout(setup, timeout_delay);
-		}		
+		}
 	}
 	
 	function monitor_serial() {
