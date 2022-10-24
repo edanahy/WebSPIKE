@@ -1,0 +1,317 @@
+<!-- 
+Project Name: Dance Party
+Author: Ethan Danahy
+Last update: October 23rd, 2022
+Requires: SPIKE 3 Firmware
+Description: Use a Chrome Browser and SPIKE Prime to play music
+			 and have a robot move in time (at certain timestamps)
+(C) Tufts Center for Engineering Education and Outreach (CEEO)
+-->
+<html>
+<head>
+	<title>Dance Party</title>
+    <!-- Gabriel Sessions' PyREPL Connection -->
+    <script defer="defer" src="https://cdn.jsdelivr.net/gh/gabrielsessions/pyrepl-js/build/main.js"></script>
+    <!--IDE API-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.min.js"></script>
+    <style>
+        .bottom_text {
+	        color: black;
+        }
+        .topToolbar {
+            background-color: rgb(243, 250, 254);
+            color: rgb(7, 23, 44);
+            position: relative;
+            width: 400px;
+            height: 70px;
+            border: solid;
+            border-width: 1px;
+            margin: auto;
+            display: inline-block;
+        }
+        .editor {
+	        border: 1px black solid;
+            position: relative;
+            left: 10px;
+            height: 200px;
+            width: 600px;
+        }
+        .active {
+	        background-color: lightgreen;
+        }
+	</style>
+</head>
+<body onload='configure_editors();'>
+
+	<h1>Dance Party</h1>
+
+	<!-- SPIKE PRIME (SPIKE 3) PyREPL Connection -->
+	<div align=center>
+		<div class="topToolbar">
+	        <div style="position: relative; float:left; margin: 20px; text-align: center; top: 20%;">
+	            Connect SPIKE&trade; 3:
+	        </div>
+	        <div id="root"></div>
+	    </div>
+	</div>
+
+	<br /><br />
+
+	<div align=center>
+		<button onclick='start();'>START ROUTINE</button>
+		&nbsp;&nbsp;
+		<button onclick='stop();'>STOP ROUTINE</button>
+	</div>
+
+	<br /><br />
+
+	<!-- SOUND -->
+	<div align=center>
+		Audio File:<br />
+		<audio controls id='sound'
+		    src="./MJ.mp3">Your browser does not support the <code>audio</code> element.
+		</audio>
+	</div>
+
+	<br /><br />
+	
+	<p><b>Note:</b> you must ensure all the <em>Start Time</em> timestamps are in increasing order.</p>
+
+	<table cellspacing=5 cellpadding=5>
+		
+<!-- START OF SECTION -->
+<!-- Want to duplicate? Copy and paste from here to end of section... -->
+	<tr>
+		<td valign="top" class="first_td">
+			<h2>Section</h2>
+			<blockquote>
+				<!-- CHANGE "value" OF FOLLOWING INPUT TO CORRECT TIME -->
+				<p>Start Time (seconds): <input type=text size=5 value='0' class="time">
+				<br /><br />
+				<button class="test">TEST SECTION</button>
+				</p>
+			</blockquote>
+		<!-- UPDATE EDITOR DIV WITH SPIKE PYTHON CODE -->
+		<td><td><div class="editor">
+import display, motor
+display.display_text_for_time("Dance", 2000, 100)
+motor.motor_move_at_power(port.PORTD, 2500)
+motor.motor_move_at_power(port.PORTF, 2000)
+</div></td>
+	</tr>
+<!-- END OF SECTION -->
+
+<!-- START OF SECTION -->
+<!-- Want to duplicate? Copy and paste from here to end of section... -->
+	<tr>
+		<td valign="top" class="first_td">
+			<h2>Section</h2>
+			<blockquote>
+				<!-- CHANGE "value" OF FOLLOWING INPUT TO CORRECT TIME -->
+				<p>Start Time (seconds): <input type=text size=5 value='2' class="time">
+				<br /><br />
+				<button class="test">TEST SECTION</button>
+				</p>
+			</blockquote>
+		<!-- UPDATE EDITOR DIV WITH SPIKE PYTHON CODE -->
+		<td><td><div class="editor">
+import display, motor
+motor.motor_move_at_power(port.PORTD, -2500)
+motor.motor_move_at_power(port.PORTF, -2000)
+</div></td>
+	</tr>
+<!-- END OF SECTION -->
+
+<!-- START OF SECTION -->
+<!-- Want to duplicate? Copy and paste from here to end of section... -->
+	<tr>
+		<td valign="top" class="first_td">
+			<h2>Section</h2>
+			<blockquote>
+				<!-- CHANGE "value" OF FOLLOWING INPUT TO CORRECT TIME -->
+				<p>Start Time (seconds): <input type=text size=5 value='13' class="time">
+				<br /><br />
+				<button class="test">TEST SECTION</button>
+				</p>
+			</blockquote>
+		<!-- UPDATE EDITOR DIV WITH SPIKE PYTHON CODE -->
+		<td><td><div class="editor">
+import display, motor
+motor.motor_move_at_power(port.PORTD, 4000)
+motor.motor_move_at_power(port.PORTF, 4000)
+</div></td>
+	</tr>
+<!-- END OF SECTION -->
+
+<!-- START OF SECTION -->
+<!-- Want to duplicate? Copy and paste from here to end of section... -->
+	<tr>
+		<td valign="top" class="first_td">
+			<h2>Section</h2>
+			<blockquote>
+				<!-- CHANGE "value" OF FOLLOWING INPUT TO CORRECT TIME -->
+				<p>Start Time (seconds): <input type=text size=5 value='20' class="time">
+				<br /><br />
+				<button class="test">TEST SECTION</button>
+				</p>
+			</blockquote>
+		<!-- UPDATE EDITOR DIV WITH SPIKE PYTHON CODE -->
+		<td><td><div class="editor">
+import display, motor, time
+motor.motor_move_at_power(port.PORTD, 2500)
+motor.motor_move_at_power(port.PORTF, 2000)
+time.sleep(8)
+motor.motor_stop()
+</div></td>
+	</tr>
+<!-- END OF SECTION -->
+	
+	</table>
+
+	<hr />
+
+	<p class="bottom_text"><b>Disclaimer</b></p>
+
+	<p class="bottom_text">LEGO®, the LEGO® logo, the Brick, MINDSTORMS®, SPIKE™, and the Minifigure are trademarks of ©The LEGO® Group. All other trademarks and copyrights are the property of their respective owners. All rights reserved.</p>
+
+	<p class="bottom_text">This page isn’t affiliated, authorized, or endorsed by The LEGO Group.</p>
+
+</body>	
+
+<!-- SCRIPTS THAT MAKE THIS RUN -->
+<script lang='javascript'>
+	// setup
+	var mainimage = document.getElementById("mainimage");
+	var animationimage = document.getElementById("animationimage");
+	var force_sensor = null;
+	var force_sensor_port = "port.PORTD";
+	var force_threshold = 5; // how hard to push to trigger response
+	var timeout_delay = 100;
+	var repl_timout_delay = 50;
+	
+	var editor_collection = null;
+	var editor_array = Array();
+	
+	var starttime = 0; // updated to current timestamp
+	var check_time_delay = 100;
+	var last_timestamp = -1;
+
+	function configure_editors() {
+		editor_collection = document.getElementsByClassName("editor");
+		console.log("Number of editors: " + editor_collection.length);
+		for (var i = 0; i < editor_collection.length; i++) {
+			console.log('Set up editor #' + i);
+			editor_collection[i].id = "editor" + i;
+			editor_array.push(ace.edit("editor" + i));
+			var this_row = document.getElementById("editor" + i).closest('tr');
+			var this_td = this_row.querySelector("td.first_td");
+			this_td.id = "td" + i;
+			var this_time = this_row.querySelector("input.time");
+			this_time.id = "time" + i;
+			var this_button = this_row.querySelector("button.test");
+			this_button.id = "button" + i;
+			this_button.onclick = function() {
+				var index = parseInt(this.id.replace("button", ""));
+				console.log("TEST SECTION button clicked: " + index);
+				run_code(index);
+				return 0;
+			}
+		}
+		setup(); // call main setup function
+	}
+
+	function setup() {
+		if (window.pyrepl && window.pyrepl.isActive) {
+			console.log('SPIKE Connected: SETUP SPIKE 3');
+			window.pyrepl.write = "import motor, force_sensor, port";
+		} else {
+			// PYREPL not ready
+			// check back to do setup
+			setTimeout(setup, timeout_delay);
+		}		
+	}
+
+	function run_code(index) {
+		clear_all_active();
+		turn_on(index);
+		if (window.pyrepl && window.pyrepl.isActive) {
+			var code = editor_array[index].getSession().getValue();
+			window.pyrepl.write = code;
+		}
+	}
+	
+	// these functions (clear_all_active and turn_on) are used
+	// for turning the "active" section currently running green...
+	function clear_all_active() {
+		for (var i = 0; i < editor_array.length; i++) {
+			turn_on(i, false);
+		}
+	}
+	function turn_on(i, on_boolean = true) {
+		var this_td = document.getElementById("td" + i);
+		if (on_boolean) {
+			this_td.classList.add("active");
+		} else {
+			this_td.classList.remove("active");
+		}
+	}
+
+	// check the time on the audio
+	function check_time() {
+		// make sure audio is still playing:
+		var audio = document.getElementById("sound");
+		if (!audio.paused) {
+			for (var i=0; i<editor_array.length; i++) {
+				var this_time = parseFloat(document.getElementById("time" + i).value);
+				if (this_time > last_timestamp) {
+					var current_audio_time = audio.currentTime;
+					if (this_time <= current_audio_time) {
+						console.log('RUN:');
+						console.log('- last_timestamp: ' + last_timestamp);
+						console.log('- current_audio_time: ' + current_audio_time);
+						console.log('- this time: ' + this_time);
+						// update last time stamp
+						last_timestamp = this_time;
+						// run code
+						run_code(i);
+					}
+					// stop looking
+					break;
+				}
+			}
+			// set timeout to check again...
+			setTimeout(check_time, check_time_delay);
+		} else {
+			// audio not running, so shouldn't be checking time...
+			// stop and clear (for good measure)
+			stop();
+		}
+	}
+
+	function start() {
+		clear_all_active();
+		play_audio();
+		last_timestamp = -1;
+		starttime = Date.now();
+		console.log('START: song started at ' + starttime);
+		setTimeout(check_time, check_time_delay);
+	}
+	function stop() {
+		stop_audio();
+		window.pyrepl.write = "import motor\nmotor.motor_stop()";
+		clear_all_active();
+		starttime = 0;
+		last_timestamp = -1;
+	}
+	function play_audio() {
+		var audio = document.getElementById("sound");
+		audio.play();
+	}
+	function stop_audio() {
+		var audio = document.getElementById("sound");
+		audio.pause();
+		audio.currentTime = 0;
+	}
+	
+</script>
+</html>
