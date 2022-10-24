@@ -47,6 +47,13 @@ Examples support both SPIKE 2 and SPIKE 3 firmware.  See site homepage for more 
 - [SPIKE 2 Example](https://edanahy.github.io/WebSPIKE/BalloonPop/)
 - [SPIKE 3 Example](https://edanahy.github.io/WebSPIKE/SPIKE3/BalloonPop/)
 
+## Dance Party
+
+**Description:** Syncing SPIKE Python Code with timestamps in an audio file.
+
+- SPIKE 2 Example: *not available*
+- [SPIKE 3 Example](https://edanahy.github.io/WebSPIKE/SPIKE3/DanceParty/)
+
 ## Pong
 
 **Description:** Simple in-browser Pong Game controlled by motors.
