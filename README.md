@@ -82,6 +82,13 @@ Examples support both SPIKE 2 and SPIKE 3 firmware.  See site homepage for more 
 - [SPIKE 2 Example](https://edanahy.github.io/WebSPIKE/ReactionGame/): Requires 3 hubs
 - SPIKE 3 Example: *not available*
 
+## Hub-2-Hub
+
+**Description:** Getting two SPIKE 3 hubs to talk to each other; a temporary hack using iframes...
+
+- SPIKE 2 Example: *not available*
+- [SPIKE 3 Example](https://edanahy.github.io/WebSPIKE/SPIKE3/Hub2Hub/): Requires 2 hubs
+
 # Disclaimer
 LEGO®, the LEGO® logo, the Brick, MINDSTORMS®, SPIKE™, and the Minifigure are trademarks of ©The LEGO® Group. All other trademarks and copyrights are the property of their respective owners. All rights reserved.
 
