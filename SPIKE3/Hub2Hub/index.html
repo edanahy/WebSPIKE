@@ -1,0 +1,116 @@
+<html>
+	<head>
+		<title>Hub-2-Hub Example</title>
+		<style>
+			.bottom_text {
+				color: black;
+		    }
+		</style>
+		<script lang='javascript'>
+			
+			var spike_content = '<html><head><scr' + 'ipt defer=\'defer\' src=\'https://cdn.jsdelivr.net/gh/gabrielsessions/pyrepl-js/build/main.js\'></scr' + 'ipt></head>';
+			spike_content += '<body onload=\'setup();\'><p align=\'center\'>Connect <b><em>SPIKE_NUM</em></b> SPIKE&trade; 3: <div id=\'root\' align=center></div></p></body>';
+			spike_content += '<sc' + 'ript lang=\'javascript\'>var timeout_delay = 200; ';
+			spike_content += '	function setup() { if (window.pyrepl && window.pyrepl.isActive) { console.log(\'SPIKE_NUM SPIKE is ready...\'); } else { setTimeout(setup, timeout_delay); } } ';
+			spike_content += '</sc' + 'ript></html>';
+
+			// from: https://stackoverflow.com/questions/46049561/cannot-write-content-inside-iframe
+			function write_iframes() {
+		        var ifrm = document.getElementById('spike1');
+		        var doc = ifrm.contentWindow || ifrm.contentDocument.document || ifrm.contentDocument;
+		        doc.document.open();
+		        doc.document.write(spike_content.replaceAll('SPIKE_NUM', 'FIRST'));
+		        doc.document.close();
+
+		        var ifrm = document.getElementById('spike2');
+		        var doc = ifrm.contentWindow || ifrm.contentDocument.document || ifrm.contentDocument;
+		        doc.document.open();
+		        doc.document.write(spike_content.replaceAll('SPIKE_NUM', 'SECOND'));
+		        doc.document.close();
+		        
+		        monitor_connection();
+			}
+
+			var spike1 = null;
+			var spike2 = null;
+			var monitor_delay = 1000;
+			
+			function monitor_connection() {
+				// get references
+				var ifrm_1 = document.getElementById('spike1');
+		        var doc_1 = ifrm_1.contentWindow || ifrm_1.contentDocument.document || ifrm_1.contentDocument;
+				var ifrm_2 = document.getElementById('spike2');
+		        var doc_2 = ifrm_2.contentWindow || ifrm_2.contentDocument.document || ifrm_2.contentDocument;
+		        if (doc_1.pyrepl && doc_1.pyrepl.isActive && doc_2.pyrepl && doc_2.pyrepl.isActive) {
+			        console.log('BOTH SPIKES ARE READY!');
+			        spike1 = doc_1.pyrepl;
+			        spike2 = doc_2.pyrepl;
+		        } else {
+			        setTimeout(monitor_connection, monitor_delay);
+		        }
+			}
+			
+			function test_spike(spike_num, text_to_write) {
+				if (spike_num == 1) {
+					if (spike1 != null && spike1.isActive) {
+						console.log("SPIKE1:\n" + spike1.read);
+						spike1.write = "import display\ndisplay_text_for_time('" + text_to_write + "', 2000, 100)";
+					} else { console.log('SPIKE 1 not ready...'); }
+				}
+				if (spike_num == 2) {
+					if (spike2 != null && spike2.isActive) {
+						console.log("SPIKE2:\n" + spike2.read);
+						spike2.write = "import display\ndisplay_text_for_time('" + text_to_write + "', 2000, 100)";
+					} else { console.log('SPIKE 2 not ready...'); }
+				}
+			}
+			
+		</script>
+	</head>
+	<body onload='write_iframes();'>
+		
+	<h1>SPIKE 3: Hub to Hub Communication</h1>
+	
+	<table width=600 align=center border=1>
+		
+		<!-- SPIKE CONNECTIONS -->
+		<tr height=200><td>
+			<iframe id='spike1' width=100% height=100%></iframe>
+		</td><td>
+			<iframe id='spike2' width=100% height=100%></iframe>
+		</td></tr>
+
+		<tr><td colspan="2" align=center>
+			<button onclick='test_spike(1, "SPIKE 1"); test_spike(2, "SPIKE 2");'>TEST</button>
+		</td></tr>
+		
+		<!-- MONITOR -->
+		<tr><td>
+			<h1>SPIKE 1:</h1>
+			<p align="center"><button onclick='test_spike(1, "1");'>Display "1"</button></p>
+			<p><b>Monitor Touch Sensor A:</b></p>
+			<p align="center"><em>... coming soon ...</em></p>
+		</td><td>
+			<h1>SPIKE 2:</h1>
+			<p align="center"><button onclick='test_spike(2, "2");'>Display "2"</button></p>
+			<p><b>Move Motor A</b></p>
+			<p align="center"><em>... coming soon ...</em></p>
+		</td></tr>
+					
+	</table>
+
+	<br /><br />
+
+		
+			
+	<hr />
+
+	<p class="bottom_text"><b>Disclaimer</b></p>
+
+	<p class="bottom_text">LEGO®, the LEGO® logo, the Brick, MINDSTORMS®, SPIKE™, and the Minifigure are trademarks of ©The LEGO® Group. All other trademarks and copyrights are the property of their respective owners. All rights reserved.</p>
+
+	<p class="bottom_text">This page isn’t affiliated, authorized, or endorsed by The LEGO Group.</p>
+
+		
+	</body>
+</html>

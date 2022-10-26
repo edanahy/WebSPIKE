@@ -1,0 +1,21 @@
+<html>
+	<head>
+		<!-- Gabriel Sessions' PyREPL Connection -->
+		<script defer="defer" src="https://cdn.jsdelivr.net/gh/gabrielsessions/pyrepl-js/build/main.js"></script>
+	</head>
+	<body onload='setup();'>
+		<p align="center">
+			Connect <b><em>FIRST</em></b> SPIKE&trade; 3: <div id="root" align=center></div>
+		</p>
+	</body>
+	<script language='javascript'>
+		var timeout_delay = 200;
+		function setup() {
+			if (window.pyrepl && window.pyrepl.isActive) {
+				console.log('SPIKE 1 is ready...');
+			} else {
+				setTimeout(setup, timeout_delay);
+			}
+		}
+	</script>
+</html>
