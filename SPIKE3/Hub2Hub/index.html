@@ -33,35 +33,69 @@
 
 			var spike1 = null;
 			var spike2 = null;
-			var monitor_delay = 1000;
+			var monitor_delay = 750; // how often to check if SPIKE hubs have been connected
 			
 			function monitor_connection() {
-				// get references
-				var ifrm_1 = document.getElementById('spike1');
-		        var doc_1 = ifrm_1.contentWindow || ifrm_1.contentDocument.document || ifrm_1.contentDocument;
-				var ifrm_2 = document.getElementById('spike2');
-		        var doc_2 = ifrm_2.contentWindow || ifrm_2.contentDocument.document || ifrm_2.contentDocument;
-		        if (doc_1.pyrepl && doc_1.pyrepl.isActive && doc_2.pyrepl && doc_2.pyrepl.isActive) {
-			        console.log('BOTH SPIKES ARE READY!');
-			        spike1 = doc_1.pyrepl;
-			        spike2 = doc_2.pyrepl;
-		        } else {
+				var spike_ready_div = document.getElementById('spikeready');
+				spike_ready_div.innerHTML = '&nbsp;';
+				// get references and check SPIKE 1
+				if (spike1 == null) {
+					var ifrm_1 = document.getElementById('spike1');
+			        var doc_1 = ifrm_1.contentWindow || ifrm_1.contentDocument.document || ifrm_1.contentDocument;
+			        if (doc_1.pyrepl && doc_1.pyrepl.isActive) {
+				        spike1 = doc_1.pyrepl;
+				        // SPIKE 1 is set up: start monitoring force sensor
+				        spike1.write = "import motor, force_sensor, port, time";
+				        spike1_monitor_sensor();
+				    }
+				}
+				if (spike1 == null) {
+					spike_ready_div.innerHTML += "<span style='color: red;'>SPIKE 1 is not ready</span>; ";
+				} else {
+					spike_ready_div.innerHTML += "<span style='color: green;'>SPIKE 1 is ready</span>; ";
+				}
+
+				// get references and check SPIKE 2
+				if (spike2 == null) {
+					var ifrm_2 = document.getElementById('spike2');
+			        var doc_2 = ifrm_2.contentWindow || ifrm_2.contentDocument.document || ifrm_2.contentDocument;
+			        if (doc_2.pyrepl && doc_2.pyrepl.isActive) {
+				        spike2 = doc_2.pyrepl;
+						// SPIKE 2 is set up; make sure imports are initialized
+				        spike2.write = "import motor, force_sensor, port, time";
+				    }
+				}
+				if (spike2 == null) {
+					spike_ready_div.innerHTML += "<span style='color: red;'>SPIKE 2 is not ready</span>";
+				} else {
+					spike_ready_div.innerHTML += "<span style='color: green;'>SPIKE 2 is ready</span>";
+				}
+
+			    // keep checking if not yet set up
+			    if (spike1 == null || spike2 == null) {
 			        setTimeout(monitor_connection, monitor_delay);
 		        }
 			}
 			
 			function test_spike(spike_num, text_to_write) {
+				var error_box = document.getElementById('spikeerror');
 				if (spike_num == 1) {
 					if (spike1 != null && spike1.isActive) {
 						console.log("SPIKE1:\n" + spike1.read);
 						spike1.write = "import display\ndisplay_text_for_time('" + text_to_write + "', 2000, 100)";
-					} else { console.log('SPIKE 1 not ready...'); }
+					} else {
+						console.log('SPIKE 1 not ready...');
+						error_box.innerHTML += " SPIKE 1 not ready; ";
+					}
 				}
 				if (spike_num == 2) {
 					if (spike2 != null && spike2.isActive) {
 						console.log("SPIKE2:\n" + spike2.read);
 						spike2.write = "import display\ndisplay_text_for_time('" + text_to_write + "', 2000, 100)";
-					} else { console.log('SPIKE 2 not ready...'); }
+					} else {
+						console.log('SPIKE 2 not ready...');
+						error_box.innerHTML += " SPIKE 2 not ready ";
+					}
 				}
 			}
 			
@@ -81,7 +115,9 @@
 		</td></tr>
 
 		<tr><td colspan="2" align=center>
-			<button onclick='test_spike(1, "SPIKE 1"); test_spike(2, "SPIKE 2");'>TEST</button>
+			<span id='spikeready'>&nbsp;</span><br />
+			<button onclick='document.getElementById("spikeerror").innerHTML = "&nbsp;"; test_spike(1, "SPIKE 1"); test_spike(2, "SPIKE 2");'>TEST</button><br />
+			<span id='spikeerror'>&nbsp;</span>
 		</td></tr>
 		
 		<!-- MONITOR -->
@@ -89,12 +125,12 @@
 			<h1>SPIKE 1:</h1>
 			<p align="center"><button onclick='test_spike(1, "1");'>Display "1"</button></p>
 			<p><b>Monitor Touch Sensor A:</b></p>
-			<p align="center"><em>... coming soon ...</em></p>
+			<p align="center" id='force_detected'>&nbsp;</p>
 		</td><td>
 			<h1>SPIKE 2:</h1>
 			<p align="center"><button onclick='test_spike(2, "2");'>Display "2"</button></p>
 			<p><b>Move Motor A</b></p>
-			<p align="center"><em>... coming soon ...</em></p>
+			<p align="center" id='motor_moving'>&nbsp;</p>
 		</td></tr>
 					
 	</table>
@@ -113,4 +149,70 @@
 
 		
 	</body>
+	<script lang='javascript'>
+		// SPIKE 1:
+		var force_sensor = null;
+		var force_sensor_port = "port.PORTA";
+		var force_threshold = 5; // how hard to push to trigger response
+		// SPIKE 2:
+		var motor_port = "port.PORTA";
+		var motor_move_time = 1000; // in miliseconds
+		var motor_move_power = 10000; 
+		// other timeouts
+		var timeout_delay = 100;
+		var repl_timout_delay = 50;
+
+		function spike1_monitor_sensor() {
+			document.getElementById('force_detected').innerHTML = '&nbsp;';
+			document.getElementById('motor_moving').innerHTML = '&nbsp;';
+			if (spike1.isActive) {
+				// write out command to read touch sensor
+				var command = "print('A' + 'A' + 'A' + str(force_sensor.get_force(" + force_sensor_port + ")) + 'a' + 'a' + 'a')";
+				spike1.write = command;
+				// monitor console for reply
+				setTimeout(() => {
+					// parse string
+					let consoleOut = spike1.read;
+					// find value
+					var current_force_val = -1;
+					for (i=consoleOut.length - 1; i>=0; i--) {
+						if (consoleOut[i].includes('AAA')) {
+							// console.log('found value at ' + i.toString() + ': ' + consoleOut[i]);
+							var start_loc = consoleOut[i].indexOf('AAA') + 3;
+							var end_loc = consoleOut[i].indexOf('aaa');
+							current_force_val = parseFloat(consoleOut[i].substring(start_loc, end_loc));
+							current_force_val = current_force_val / 10; // to get Newtons
+							console.log('FORCE VAL: ' + current_force_val);
+							break;
+						}
+					}
+					// clear console
+					spike1.clearConsole;
+					// if value is high, then pop
+					if (current_force_val > force_threshold) {
+						console.log('DETECTED FORCE: MOVE MOTOR');
+						document.getElementById('force_detected').innerHTML = 'FORCE DETECTED!';
+						spike2_move_motor()
+						return 0; // because do_pop will restart monitor
+					} else {
+						// not valid force value, so reset sensor monitor
+						setTimeout(spike1_monitor_sensor, timeout_delay);
+					}
+				}, repl_timout_delay);
+				return 0; // because timeout will restart monitor sensor
+			}
+			setTimeout(spike1_monitor_sensor, timeout_delay);
+			
+		}
+
+		function spike2_move_motor() {
+			if (spike2.isActive) {
+				document.getElementById('motor_moving').innerHTML = "motor moving";
+				var command = "motor.motor_move_for_time(" + motor_port + ", " + motor_move_time + ", " + motor_move_power + ")";
+				spike2.write = command;
+			}
+			// done moving motor, so continue monitoring force sensor
+			setTimeout(spike1_monitor_sensor, parseInt(motor_move_time));
+		}
+	</script>
 </html>
