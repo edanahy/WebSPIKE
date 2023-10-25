@@ -1,7 +1,8 @@
 <!-- 
 Project Name: SPIKE Balloon Pop Webpage
 Author: Ethan Danahy
-Last update: October 21st, 2022
+Original update: October 21st, 2022
+Last update: October 21st, 2023 (for new SPIKE 3 Python API)
 Requires: SPIKE 3 Firmware
 Description: Use a Chrome Browser and SPIKE Prime (Force on Port D)
 			 to pop a virtual balloon (with sound effect!).
@@ -90,7 +91,7 @@ Description: Use a Chrome Browser and SPIKE Prime (Force on Port D)
 	var mainimage = document.getElementById("mainimage");
 	var animationimage = document.getElementById("animationimage");
 	var force_sensor = null;
-	var force_sensor_port = "port.PORTD";
+	var force_sensor_port = "port.D"; // UPDATED FOR NEW SPIKE 3 (OCT 2023)
 	var force_threshold = 5; // how hard to push to trigger response
 	var timeout_delay = 100;
 	var repl_timout_delay = 50;
@@ -98,7 +99,7 @@ Description: Use a Chrome Browser and SPIKE Prime (Force on Port D)
 	function setup() {
 		if (window.pyrepl && window.pyrepl.isActive) {
 			console.log('SPIKE Connected: SETUP SPIKE 3');
-			window.pyrepl.write = "import motor, force_sensor, port";
+			window.pyrepl.write = "import force_sensor\nfrom hub import port"; // UPDATED FOR NEW SPIKE 3 (OCT 2023)
 			setTimeout(monitor_sensor, timeout_delay);
 		} else {
 			// PYREPL not ready
@@ -111,7 +112,8 @@ Description: Use a Chrome Browser and SPIKE Prime (Force on Port D)
 		// make sure they have loaded SPIKE Prime
 		if (window.pyrepl.isActive) {
 			// write out command to read touch sensor
-			var command = "print('a' + 'a' + 'a' + str(force_sensor.get_force(" + force_sensor_port + ")) + 'b' + 'b' + 'b')";
+			// UPDATED FOR NEW SPIKE 3 (OCT 2023)
+			var command = "print('a' + 'a' + 'a' + str(force_sensor.force(" + force_sensor_port + ")) + 'b' + 'b' + 'b')";
 			window.pyrepl.write = command;
 			// monitor console for reply
 			setTimeout(() => {
