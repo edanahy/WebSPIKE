@@ -2,6 +2,7 @@
 Project Name: Simple SPIKE Prime Web Interface
 Author: Ethan Danahy
 Last update: October 21st, 2022
+Last update: October 25th, 2023 (for new SPIKE 3 Python API)
 Requires: SPIKE 3 Firmware
 Description: Use a Chrome Browser and custom webpage to
 			 execute code on the SPIKE Prime hub (SPIKE 3)
@@ -117,11 +118,14 @@ History:
         <!-- ####         ***         Code editor          ***        #### -->
         <!-- #### CHANGE THIS CODE TO CHANGE DEFAULT SPIKE PRIME CODE #### -->
         <div id="editor"># Sample Code
-import display
-# Write "Hi There" on the 5x5 display.
-# Make the animation take 2 seconds.
-# Set the brightness of each letter to 100
-display.display_text_for_time("Hi There", 2000, 100)
+from hub import light_matrix
+import runloop
+
+async def main():
+    # write your code here
+    await light_matrix.write("Hi!")
+
+runloop.run(main())
 </div>
         </div>
 
@@ -132,39 +136,55 @@ display.display_text_for_time("Hi There", 2000, 100)
 	<p><div class="instructions"><blockquote>
 <span><code><pre>
 <b># Default Program</b>
-import display
-# Write "Hi There" on the 5x5 display.
-# Make the animation take 2 seconds.
-# Set the brightness of each letter to 100
-display.display_text_for_time("Hi There", 2000, 100)
+from hub import light_matrix
+import runloop
+
+async def main():
+    # write your code here
+    await light_matrix.write("Hi!")
+
+runloop.run(main())
 </pre></code></span>
 	</blockquote></div></p>
 
 	<p><div class="instructions"><blockquote>
 <span><code><pre>
 <b># Test Hub: Happy and Sad</b>
-import display, time
+from hub import light_matrix
+import runloop
 
-# see <a href='https://docs.google.com/document/d/1m2BSe43-q8vxN7as5mN_ojofSZisrvGawrcCIzOj-eI/' target=_blank>picture documentation</a>
+async def happy_sad():
 
-for i in range(4):
-	display.display_show_pictogram(3) # pic 3 is HAPPY
-	time.sleep(0.5)
-	display.display_show_pictogram(5) # pic 5 is SAD
-	time.sleep(0.5)
-display.display_clear()
+	for i in range(4):
+		# Update pixels to show an image on Light Matrix using the show_image function 
+	
+		# Show a smiling face 
+		light_matrix.show_image(light_matrix.IMAGE_HAPPY)
+		await runloop.sleep_ms(250)
+		# Show a sad face 
+		light_matrix.show_image(light_matrix.IMAGE_SAD)
+		await runloop.sleep_ms(250)
+
+	display.display_clear()
+	
+runloop.run(happy_sad())
 </pre></code></span>
 	</blockquote></div></p>
 
 	<p><div class="instructions"><blockquote>
 <span><code><pre>
 <b># Move Motors: Medium Motors on Ports A and B</b>
-import motor, port, time
+import motor
+import runloop
+from hub import port
 
-motor.motor_move_at_speed(port.PORTA, 10000)
-motor.motor_move_at_speed(port.PORTB, 5000)
-time.sleep(5)
-motor.motor_stop()
+async def move():
+	motor.run(port.A, 250)
+	motor.run(port.B, 250)
+	await runloop.sleep_ms(1000)
+	motor.stop()
+
+runloop.run(move())
 </pre></code></span>
 	</blockquote></div></p>
 
@@ -198,7 +218,7 @@ motor.motor_stop()
             // issue a Control-C to exit code
             window.pyrepl.stop;
             // issues a motor stop in case motors are still running
-            window.pyrepl.write = "import motor\nmotor.motor_stop()"
+            window.pyrepl.write = "import motor\nmotor.stop()"
         })
     </script>
 </html>
