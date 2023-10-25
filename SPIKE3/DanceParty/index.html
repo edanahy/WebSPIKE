@@ -1,7 +1,8 @@
 <!-- 
 Project Name: Dance Party
 Author: Ethan Danahy
-Last update: October 23rd, 2022
+Original update: October 23rd, 2022
+Last update: October 24th, 2023 (for new SPIKE 3 Python API)
 Requires: SPIKE 3 Firmware
 Description: Use a Chrome Browser and SPIKE Prime to play music
 			 and have a robot move in time (at certain timestamps)
@@ -33,7 +34,7 @@ Description: Use a Chrome Browser and SPIKE Prime to play music
 	        border: 1px black solid;
             position: relative;
             left: 10px;
-            height: 200px;
+            height: 250px;
             width: 600px;
         }
         .active {
@@ -48,8 +49,8 @@ Description: Use a Chrome Browser and SPIKE Prime to play music
 	<!-- SPIKE PRIME (SPIKE 3) PyREPL Connection -->
 	<div align=center>
 		<div class="topToolbar">
-	        <div style="position: relative; float:left; margin: 20px; text-align: center; top: 20%;">
-	            Connect SPIKE&trade; 3:
+	        <div style="position: relative; float:left; margin: 10px; text-align: center; top: 10%;">
+	            Connect SPIKE&trade; 3:<br /><em>Motors on Ports D and F
 	        </div>
 	        <div id="root"></div>
 	    </div>
@@ -93,10 +94,24 @@ Description: Use a Chrome Browser and SPIKE Prime to play music
 			</blockquote>
 		<!-- UPDATE EDITOR DIV WITH SPIKE PYTHON CODE -->
 		<td><td><div class="editor">
-import display, motor
-display.display_text_for_time("Dance", 2000, 100)
-motor.motor_move_at_power(port.PORTD, 2500)
-motor.motor_move_at_power(port.PORTF, 2000)
+# Import necessary modules and submodules
+from hub import port, light_matrix
+import motor, runloop
+
+legs_motor = port.D
+arms_motor = port.F
+
+# Define a simple function for moving motors
+async def move_motors():
+    motor.run(legs_motor, 500)
+    motor.run(arms_motor, 500)
+
+# Define a function to display text on the light matrix
+async def display_text(text_in):
+    light_matrix.write(text_in)
+
+# Call the functions
+runloop.run(display_text('1'), move_motors())
 </div></td>
 	</tr>
 <!-- END OF SECTION -->
@@ -115,9 +130,24 @@ motor.motor_move_at_power(port.PORTF, 2000)
 			</blockquote>
 		<!-- UPDATE EDITOR DIV WITH SPIKE PYTHON CODE -->
 		<td><td><div class="editor">
-import display, motor
-motor.motor_move_at_power(port.PORTD, -2500)
-motor.motor_move_at_power(port.PORTF, -2000)
+# Import necessary modules and submodules
+from hub import port, light_matrix
+import motor, runloop
+
+legs_motor = port.D
+arms_motor = port.F
+
+# Define a simple function for moving motors
+async def move_motors():
+    motor.run(legs_motor, -500)
+    motor.run(arms_motor, -500)
+
+# Define a function to display text on the light matrix
+async def display_text(text_in):
+    light_matrix.write(text_in)
+
+# Call the functions
+runloop.run(display_text('2'), move_motors())
 </div></td>
 	</tr>
 <!-- END OF SECTION -->
@@ -136,9 +166,24 @@ motor.motor_move_at_power(port.PORTF, -2000)
 			</blockquote>
 		<!-- UPDATE EDITOR DIV WITH SPIKE PYTHON CODE -->
 		<td><td><div class="editor">
-import display, motor
-motor.motor_move_at_power(port.PORTD, 4000)
-motor.motor_move_at_power(port.PORTF, 4000)
+# Import necessary modules and submodules
+from hub import port, light_matrix
+import motor, runloop
+
+legs_motor = port.D
+arms_motor = port.F
+
+# Define a simple function for moving motors
+async def move_motors():
+    motor.run(legs_motor, 0)
+    motor.run(arms_motor, 250)
+
+# Define a function to display text on the light matrix
+async def display_text(text_in):
+    light_matrix.write(text_in)
+
+# Call the functions
+runloop.run(display_text('3'), move_motors())
 </div></td>
 	</tr>
 <!-- END OF SECTION -->
@@ -157,11 +202,24 @@ motor.motor_move_at_power(port.PORTF, 4000)
 			</blockquote>
 		<!-- UPDATE EDITOR DIV WITH SPIKE PYTHON CODE -->
 		<td><td><div class="editor">
-import display, motor, time
-motor.motor_move_at_power(port.PORTD, 2500)
-motor.motor_move_at_power(port.PORTF, 2000)
-time.sleep(8)
-motor.motor_stop()
+# Import necessary modules and submodules
+from hub import port, light_matrix
+import motor, runloop
+
+legs_motor = port.D
+arms_motor = port.F
+
+# Define a simple function for moving motors
+async def move_motors():
+    motor.run(legs_motor, 500)
+    motor.run(arms_motor, -250)
+    
+# Define a function to display text on the light matrix
+async def display_text(text_in):
+    light_matrix.write(text_in)
+
+# Call the functions
+runloop.run(display_text('4'), move_motors())
 </div></td>
 	</tr>
 <!-- END OF SECTION -->
@@ -184,7 +242,7 @@ motor.motor_stop()
 	var mainimage = document.getElementById("mainimage");
 	var animationimage = document.getElementById("animationimage");
 	var force_sensor = null;
-	var force_sensor_port = "port.PORTD";
+	var force_sensor_port = "port.D"; // UPDATE for SPIKE 3 (Oct 2023)
 	var force_threshold = 5; // how hard to push to trigger response
 	var timeout_delay = 100;
 	var repl_timout_delay = 50;
@@ -223,7 +281,7 @@ motor.motor_stop()
 	function setup() {
 		if (window.pyrepl && window.pyrepl.isActive) {
 			console.log('SPIKE Connected: SETUP SPIKE 3');
-			window.pyrepl.write = "import motor, force_sensor, port";
+			window.pyrepl.write = "import force_sensor\nfrom hub import port"; // UPDATED FOR NEW SPIKE 3 (OCT 2023)
 		} else {
 			// PYREPL not ready
 			// check back to do setup
@@ -298,7 +356,7 @@ motor.motor_stop()
 	}
 	function stop() {
 		stop_audio();
-		window.pyrepl.write = "import motor\nmotor.motor_stop()";
+		window.pyrepl.write = "import motor\nmotor.stop()"; // UPDATED FOR NEW SPIKE 3 (OCT 2023)
 		clear_all_active();
 		starttime = 0;
 		last_timestamp = -1;
