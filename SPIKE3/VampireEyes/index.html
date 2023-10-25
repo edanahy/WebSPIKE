@@ -2,6 +2,7 @@
 Project Name: SPIKE Eyes Interface
 Author: Ethan Danahy
 Last update: October 21st, 2022
+Last update: October 25th, 2023 (for new SPIKE 3 Python API)
 Requires: SPIKE 3 Firmware
 Description: Use a Chrome Browser and SPIKE Prime to
 			 control a pair of eyes on the screen.
@@ -73,7 +74,7 @@ Description: Use a Chrome Browser and SPIKE Prime to
 		var max_val = 100;
 		var sensor = null;
 		var sensor_func = null;
-		var timeout_delay = 100;
+		var timeout_delay = 250;
 		var repl_timout_delay = 50;
 		var mode_selector = null;
 		var mode = null;
@@ -81,8 +82,8 @@ Description: Use a Chrome Browser and SPIKE Prime to
 		function setup() {
 			if (window.pyrepl && window.pyrepl.isActive) {
 				console.log('SPIKE Connected: SETUP SPIKE 3');
-				window.pyrepl.write = "import imu, motor, port\nimu.zeroOrientation()";
-				start_monitoring();
+				window.pyrepl.write = "from hub import motion_sensor\nimport motor\nfrom hub import port\nmotion_sensor.reset_yaw(0)";
+				setTimeout(start_monitoring, 500);
 			} else {
 				// PYREPL not ready
 				// check back to do setup
@@ -95,13 +96,13 @@ Description: Use a Chrome Browser and SPIKE Prime to
 			mode = mode_selector.options[mode_selector.selectedIndex].value;
 			console.log('MODE: ' + mode);
 		    if (mode == 'accelerometer') {
-			    window.pyrepl.write = "imu.zeroOrientation()"; // reset IMU
-			    sensor_func_code = "print('a' + 'a' + 'a' + str(imu.getOrientation()[1] / 10) + 'b' + 'b' + 'b')";
+			    window.pyrepl.write = "from hub import motion_sensor\nmotion_sensor.reset_yaw(0)\n"; // reset IMU
+			    sensor_func_code = "print('a' + 'a' + 'a' + str(motion_sensor.tilt_angles()[0]) + 'b' + 'b' + 'b')";
 			    min_val = -90;
 			    max_val = 90;
 			    setTimeout(monitor_sensor, timeout_delay);
 		    } else if (mode == 'motor') {
-			    sensor_func_code = "print('a' + 'a' + 'a' + str(port.port_getSensor(port.PORTA)[1]) + 'b' + 'b' + 'b')";
+			    sensor_func_code = "print('a' + 'a' + 'a' + str(motor.absolute_position(port.A)) + 'b' + 'b' + 'b')";
 			    min_val = -180;
 			    max_val = 180;
 				setTimeout(monitor_sensor, timeout_delay);
