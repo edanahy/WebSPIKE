@@ -1,4 +1,12 @@
-<html>
+<!-- 
+Project Name: Hub-to-Hub via iFrames
+Author: Ethan Danahy
+Original version: October 2022
+Last update: October 25th, 2023 (for new SPIKE 3 Python API)
+Requires: Two hubs running SPIKE 3 Firmware
+Description: Use a Chrome Browser and two SPIKE Primes to control each other
+(C) Tufts Center for Engineering Education and Outreach (CEEO)
+--><html>
 	<head>
 		<title>Hub-2-Hub Example</title>
 		<style>
@@ -9,7 +17,7 @@
 		<script lang='javascript'>
 			
 			var spike_content = '<html><head><scr' + 'ipt defer=\'defer\' src=\'https://cdn.jsdelivr.net/gh/gabrielsessions/pyrepl-js/build/main.js\'></scr' + 'ipt></head>';
-			spike_content += '<body onload=\'setup();\'><p align=\'center\'>Connect <b><em>SPIKE_NUM</em></b> SPIKE&trade; 3: <div id=\'root\' align=center></div></p></body>';
+			spike_content += '<body onload=\'setup();\'><br /><p align=\'center\'>Connect <b><em>SPIKE_NUM</em></b> SPIKE&trade; 3: <div id=\'root\' align=center></div></p></body>';
 			spike_content += '<sc' + 'ript lang=\'javascript\'>var timeout_delay = 200; ';
 			spike_content += '	function setup() { if (window.pyrepl && window.pyrepl.isActive) { console.log(\'SPIKE_NUM SPIKE is ready...\'); } else { setTimeout(setup, timeout_delay); } } ';
 			spike_content += '</sc' + 'ript></html>';
@@ -45,8 +53,8 @@
 			        if (doc_1.pyrepl && doc_1.pyrepl.isActive) {
 				        spike1 = doc_1.pyrepl;
 				        // SPIKE 1 is set up: start monitoring force sensor
-				        spike1.write = "import motor, force_sensor, port, time";
-				        spike1_monitor_sensor();
+				        spike1.write = "import motor, force_sensor, runloop\nfrom hub import port"; // UPDATED FOR NEW SPIKE 3 firmware (OCT 2023)
+				        setTimeout(spike1_monitor_sensor,1000); // start monitoring in 1 second
 				    }
 				}
 				if (spike1 == null) {
@@ -62,7 +70,7 @@
 			        if (doc_2.pyrepl && doc_2.pyrepl.isActive) {
 				        spike2 = doc_2.pyrepl;
 						// SPIKE 2 is set up; make sure imports are initialized
-				        spike2.write = "import motor, force_sensor, port, time";
+				        spike2.write = "import motor, force_sensor, runloop\nfrom hub import port"; // UPDATED FOR NEW SPIKE 3 firmware (OCT 2023)
 				    }
 				}
 				if (spike2 == null) {
@@ -82,7 +90,8 @@
 				if (spike_num == 1) {
 					if (spike1 != null && spike1.isActive) {
 						console.log("SPIKE1:\n" + spike1.read);
-						spike1.write = "import display\ndisplay_text_for_time('" + text_to_write + "', 2000, 100)";
+						// UPDATED FOR NEW SPIKE 3 firmware (OCT 2023)
+						spike1.write = "from hub import light_matrix\nlight_matrix.write('" + text_to_write + "')";
 					} else {
 						console.log('SPIKE 1 not ready...');
 						error_box.innerHTML += " SPIKE 1 not ready; ";
@@ -91,7 +100,8 @@
 				if (spike_num == 2) {
 					if (spike2 != null && spike2.isActive) {
 						console.log("SPIKE2:\n" + spike2.read);
-						spike2.write = "import display\ndisplay_text_for_time('" + text_to_write + "', 2000, 100)";
+						// UPDATED FOR NEW SPIKE 3 firmware (OCT 2023)
+						spike2.write = "from hub import light_matrix\nlight_matrix.write('" + text_to_write + "')";
 					} else {
 						console.log('SPIKE 2 not ready...');
 						error_box.innerHTML += " SPIKE 2 not ready ";
@@ -108,10 +118,10 @@
 	<table width=600 align=center border=1>
 		
 		<!-- SPIKE CONNECTIONS -->
-		<tr height=200><td>
-			<iframe id='spike1' width=100% height=100%></iframe>
+		<tr height=300><td>
+			<iframe id='spike1' width=100% height=300></iframe>
 		</td><td>
-			<iframe id='spike2' width=100% height=100%></iframe>
+			<iframe id='spike2' width=100% height=300></iframe>
 		</td></tr>
 
 		<tr><td colspan="2" align=center>
@@ -152,12 +162,13 @@
 	<script lang='javascript'>
 		// SPIKE 1:
 		var force_sensor = null;
-		var force_sensor_port = "port.PORTA";
-		var force_threshold = 5; // how hard to push to trigger response
+		var force_sensor_port = "port.A"; // UPDATED FOR NEW SPIKE 3 firmware (OCT 2023)
+		// force threshold 0 -> 10
+		var force_threshold = 2; // how hard to push to trigger response
 		// SPIKE 2:
-		var motor_port = "port.PORTA";
+		var motor_port = "port.A"; // UPDATED FOR NEW SPIKE 3 firmware (OCT 2023)
 		var motor_move_time = 1000; // in miliseconds
-		var motor_move_power = 10000; 
+		var motor_move_power = 1000; // SPIKE 3: max power is 1,000
 		// other timeouts
 		var timeout_delay = 100;
 		var repl_timout_delay = 50;
@@ -167,7 +178,8 @@
 			document.getElementById('motor_moving').innerHTML = '&nbsp;';
 			if (spike1.isActive) {
 				// write out command to read touch sensor
-				var command = "print('A' + 'A' + 'A' + str(force_sensor.get_force(" + force_sensor_port + ")) + 'a' + 'a' + 'a')";
+				// UPDATED FOR NEW SPIKE 3 firmware (OCT 2023)
+				var command = "print('A' + 'A' + 'A' + str(force_sensor.force(" + force_sensor_port + ")) + 'a' + 'a' + 'a')";
 				spike1.write = command;
 				// monitor console for reply
 				setTimeout(() => {
@@ -208,7 +220,7 @@
 		function spike2_move_motor() {
 			if (spike2.isActive) {
 				document.getElementById('motor_moving').innerHTML = "motor moving";
-				var command = "motor.motor_move_for_time(" + motor_port + ", " + motor_move_time + ", " + motor_move_power + ")";
+				var command = "import motor\nfrom hub import port\nmotor.run_for_time(" + motor_port + ", " + motor_move_time + ", " + motor_move_power + ")";
 				spike2.write = command;
 			}
 			// done moving motor, so continue monitoring force sensor
