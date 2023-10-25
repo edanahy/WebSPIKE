@@ -24,7 +24,7 @@ Examples support both SPIKE 2 and SPIKE 3 firmware.  See site homepage for more 
 **Description:** A browser-based Python IDE for programming the SPIKE Prime.
 
 - [SPIKE 2 Example](https://edanahy.github.io/WebSPIKE/WebIDE/)
-- [SPIKE 3 Example](https://edanahy.github.io/WebSPIKE/SPIKE3/WebIDE/)
+- [SPIKE 3 Example](https://edanahy.github.io/WebSPIKE/SPIKE3/WebIDE/) (Updated Oct 2023 for SPIKE 3 Python)
 
 ## GamePad
 
@@ -38,21 +38,21 @@ Examples support both SPIKE 2 and SPIKE 3 firmware.  See site homepage for more 
 **Description:** A halloween-themed example of polling a SPIKE input and moving in-browser images.
 
 - [SPIKE 2 Example](https://edanahy.github.io/WebSPIKE/VampireEyes/)
-- [SPIKE 3 Example](https://edanahy.github.io/WebSPIKE/SPIKE3/VampireEyes/)
+- [SPIKE 3 Example](https://edanahy.github.io/WebSPIKE/SPIKE3/VampireEyes/) (Updated Oct 2023 for SPIKE 3 Python)
 
 ## Balloon Pop
 
 **Description:** Triggering images and sound when a SPIKE Force Sensor is pushed.
 
 - [SPIKE 2 Example](https://edanahy.github.io/WebSPIKE/BalloonPop/)
-- [SPIKE 3 Example](https://edanahy.github.io/WebSPIKE/SPIKE3/BalloonPop/)
+- [SPIKE 3 Example](https://edanahy.github.io/WebSPIKE/SPIKE3/BalloonPop/) (Updated Oct 2023 for SPIKE 3 Python)
 
 ## Dance Party
 
 **Description:** Syncing SPIKE Python Code with timestamps in an audio file.
 
 - SPIKE 2 Example: *not available*
-- [SPIKE 3 Example](https://edanahy.github.io/WebSPIKE/SPIKE3/DanceParty/)
+- [SPIKE 3 Example](https://edanahy.github.io/WebSPIKE/SPIKE3/DanceParty/) (Updated Oct 2023 for SPIKE 3 Python)
 
 ## Serial Trigger
 
@@ -87,7 +87,7 @@ Examples support both SPIKE 2 and SPIKE 3 firmware.  See site homepage for more 
 **Description:** Getting two SPIKE 3 hubs to talk to each other; a temporary hack using iframes...
 
 - SPIKE 2 Example: *not available*
-- [SPIKE 3 Example](https://edanahy.github.io/WebSPIKE/SPIKE3/Hub2Hub/): Requires 2 hubs
+- [SPIKE 3 Example](https://edanahy.github.io/WebSPIKE/SPIKE3/Hub2Hub/): Requires 2 hubs  (Updated Oct 2023 for SPIKE 3 Python)
 
 # Disclaimer
 LEGO®, the LEGO® logo, the Brick, MINDSTORMS®, SPIKE™, and the Minifigure are trademarks of ©The LEGO® Group. All other trademarks and copyrights are the property of their respective owners. All rights reserved.
