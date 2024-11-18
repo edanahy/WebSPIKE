@@ -30,8 +30,8 @@
 						axisA_val = parseInt(gp.axes[0] * 180);
 						axisB_val = parseInt(gp.axes[2] * 180);
 						// move motors
-						window.pyrepl.write = "motor.motor_move_to_position(port.PORTA, " + axisA_val + ", 10000)";
-						window.pyrepl.write = "motor.motor_move_to_position(port.PORTB, " + axisB_val + ", 10000)";
+						window.pyrepl.write = "motor.run_to_absolute_position(port.PORTA, " + axisA_val + ", 10000)";
+						window.pyrepl.write = "motor.run_to_absolute_position(port.PORTB, " + axisB_val + ", 10000)";
 					}
 				}
 				setTimeout(move_motors, timeout_delay);
@@ -39,7 +39,7 @@
 			
 			function setup() {
 				if (window.pyrepl && window.pyrepl.isActive) {
-					window.pyrepl.write = "import motor, port";
+					window.pyrepl.write = "import motor\nfrom hub import port\nmotor.run_to_absolute_position(port.PORTA, 0, 10000)\nmotor.run_to_absolute_position(port.PORTB, 0, 10000)";
 					setTimeout(move_motors, timeout_delay);
 				} else {
 					// PYREPL not ready
