@@ -132,7 +132,7 @@ Description: Use a Chrome Browser and two SPIKE Prime hubs
 			// POLL MOTOR ON A
 			command += "print('A' + 'A' + 'A' + str(device.data(port.A)[0]) + 'a' + 'a' + 'a')\n";
 			// POLL MOTOR ON B
-			command += "print('B' + 'B' + 'B' + str(device.data(port.A)[0]) + 'b' + 'b' + 'b')\n";
+			command += "print('B' + 'B' + 'B' + str(device.data(port.B)[0]) + 'b' + 'b' + 'b')\n";
 			// POLL FORCE ON C
 			command += "print('C' + 'C' + 'C' + str(force_sensor.force(port.C)) + 'c' + 'c' + 'c')\n";
 			// POLL FORCE ON D
