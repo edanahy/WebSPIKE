@@ -30,8 +30,9 @@
 						axisA_val = parseInt(gp.axes[0] * 180);
 						axisB_val = parseInt(gp.axes[2] * 180);
 						// move motors
-						window.pyrepl.write = "motor.run_to_absolute_position(port.A, " + axisA_val + ", 10000)";
-						window.pyrepl.write = "motor.run_to_absolute_position(port.B, " + axisB_val + ", 10000)";
+						let code = "motor.run_to_absolute_position(port.A, " + axisA_val + ", 10000)\n";
+						code += "motor.run_to_absolute_position(port.B, " + axisB_val + ", 10000)";
+						window.pyrepl.write = code;
 					}
 				}
 				setTimeout(move_motors, timeout_delay);
