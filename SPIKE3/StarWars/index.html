@@ -115,7 +115,7 @@ Description: Use a Chrome Browser and two SPIKE Prime hubs
 	function setup() {
 		if (window.pyrepl && window.pyrepl.isActive) {
 			console.log('SPIKE Connected: SETUP SPIKE 3');
-			window.pyrepl.write = "import motor, force_sensor, port";
+			window.pyrepl.write = "import motor, force_sensor/nimport device/nfrom hub import port";
 			setTimeout(monitor_sensor, timeout_delay);
 		} else {
 			// PYREPL not ready
@@ -130,13 +130,13 @@ Description: Use a Chrome Browser and two SPIKE Prime hubs
 			// write out command to read touch sensor
 			var command = ""
 			// POLL MOTOR ON A
-			command += "print('A' + 'A' + 'A' + str(port.port_getSensor(port.PORTA)[0]) + 'a' + 'a' + 'a')\n";
+			command += "print('A' + 'A' + 'A' + str(device.data(port.A)[0]) + 'a' + 'a' + 'a')\n";
 			// POLL MOTOR ON B
-			command += "print('B' + 'B' + 'B' + str(port.port_getSensor(port.PORTB)[0]) + 'b' + 'b' + 'b')\n";
+			command += "print('B' + 'B' + 'B' + str(device.data(port.A)[0]) + 'b' + 'b' + 'b')\n";
 			// POLL FORCE ON C
-			command += "print('C' + 'C' + 'C' + str(force_sensor.get_force(port.PORTC)) + 'c' + 'c' + 'c')\n";
+			command += "print('C' + 'C' + 'C' + str(force_sensor.force(port.C)) + 'c' + 'c' + 'c')\n";
 			// POLL FORCE ON D
-			command += "print('D' + 'D' + 'D' + str(force_sensor.get_force(port.PORTD)) + 'd' + 'd' + 'd')\n";
+			command += "print('D' + 'D' + 'D' + str(force_sensor.force(port.D)) + 'd' + 'd' + 'd')\n";
 			window.pyrepl.write = command;
 			// monitor console for reply
 			setTimeout(() => {
