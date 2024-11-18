@@ -115,7 +115,7 @@ Description: Use a Chrome Browser and two SPIKE Prime hubs
 	function setup() {
 		if (window.pyrepl && window.pyrepl.isActive) {
 			console.log('SPIKE Connected: SETUP SPIKE 3');
-			window.pyrepl.write = "import motor, force_sensor/nimport device/nfrom hub import port";
+			window.pyrepl.write = "import force_sensor/nimport device/nfrom hub import port";
 			setTimeout(monitor_sensor, timeout_delay);
 		} else {
 			// PYREPL not ready
